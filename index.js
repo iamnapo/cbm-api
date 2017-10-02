@@ -49,18 +49,18 @@ CallByMeaning.prototype.lookup = function () {
 
   if (type !== 'all') {
     let path = '/gbn/' + type + '/' + String(encodeURIComponent(uri));
-    request.get({uri: this.fullAddress(path), json: true}, function(err, response, body) {
+    request.get({uri: this.fullAddress(path), json: true}, function (err, response, body) {
       return callback(err, response, body);
     });
   } else {
     var path_c = this.fullAddress('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
     var path_f = this.fullAddress('/gbn/' + 'f' + '/' + String(encodeURIComponent(uri)));
     var path_r = this.fullAddress('/gbn/' + 'r' + '/' + String(encodeURIComponent(uri)));
-    request.get({uri: path_c, json:true}, function(err, response, body) {
+    request.get({uri: path_c, json: true}, function (err, response, body) {
       if (response.statusCode === 200) return callback(err, response, body);
-      request.get({uri: path_f, json:true}, function(err, response, body) {
+      request.get({uri: path_f, json: true}, function (err, response, body) {
         if (response.statusCode === 200) return callback(err, response, body);
-        request.get({uri: path_r, json:true}, function(err, response, body) {
+        request.get({uri: path_r, json: true}, function (err, response, body) {
           if (response.statusCode === 200) {
             return callback(err, response, body);
           } else {
@@ -87,7 +87,7 @@ CallByMeaning.prototype.getURI = function () {
   let stemmed = stemmer(text);
   stemmed = stemmed.replace(',', ' ');
   stemmed = stemmed.split(' ');
-  stemmed = stemmed.filter(function(item) {
+  stemmed = stemmed.filter(function (item) {
     return (item !== '') && (item !== ',') && (item !== 'a') && (item !== 'the') && (item !== 'an');
   });
   return stemmed.join('_');
@@ -100,20 +100,20 @@ CallByMeaning.prototype.search = function () {
   var callback;
 
   if (nargs < 2) {
-    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');    
+    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
   }
   params = args[0];
   if (!(params instanceof Object)) {
-    throw new TypeError('Invalid input argument. Argument must be an object.');    
+    throw new TypeError('Invalid input argument. Argument must be an object.');
   }
-  
+
   callback = args[1];
   if (!(callback instanceof Function)) {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
   var path = this.fullAddress('/gbm/search/');
-  request.post({uri: path, form: params, json: true}, function(err, response, body) {
+  request.post({uri: path, form: params, json: true}, function (err, response, body) {
     return callback(err, response, body);
   });
 };
@@ -126,13 +126,13 @@ CallByMeaning.prototype.call = function () {
   var returnCode = false;
 
   if (nargs < 2) {
-    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');    
+    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
   }
   params = args[0];
   if (!(params instanceof Object)) {
-    throw new TypeError('Invalid input argument. Argument must be an object.');    
+    throw new TypeError('Invalid input argument. Argument must be an object.');
   }
-  
+
   if (nargs < 3) {
     callback = args[1];
   } else {
@@ -144,7 +144,7 @@ CallByMeaning.prototype.call = function () {
   }
 
   var path = this.fullAddress('/cbm/call/');
-  request.post({uri: path, headers: {returncode: returnCode}, form: params, json: true}, function(err, response, body) {
+  request.post({uri: path, headers: {returncode: returnCode}, form: params, json: true}, function (err, response, body) {
     return callback(err, response, body);
   });
 };
@@ -154,16 +154,16 @@ CallByMeaning.prototype.getCode = function () {
   var nargs = args.length;
 
   if (nargs < 2) {
-    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');    
+    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
   }
-  
+
   var path = this.fullAddress(args[0].substring(1));
   var callback = args[1];
   if (!(callback instanceof Function)) {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
-  request.get(path, function(err, response, body) {
+  request.get(path, function (err, response, body) {
     return callback(err, body);
   });
 };

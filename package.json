@@ -1,0 +1,23 @@
+{
+  "name": "cbm-api",
+  "version": "1.0.0",
+  "description": "An easy way to connect with CallByMeaning server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamnapo/cbm-api.git"
+  },
+  "author": "Napoleon-Christos Oikonomou",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/iamnapo/cbm-api/issues"
+  },
+  "homepage": "https://github.com/iamnapo/cbm-api#readme",
+  "dependencies": {
+    "request": "^2.83.0",
+    "stemmer": "^1.0.1"
+  }
+}

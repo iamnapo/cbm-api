@@ -149,5 +149,23 @@ CallByMeaning.prototype.call = function () {
   });
 };
 
+CallByMeaning.prototype.getCode = function () {
+  var args = arguments;
+  var nargs = args.length;
+
+  if (nargs < 2) {
+    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');    
+  }
+  
+  var path = this.fullAddress(args[0].substring(1));
+  var callback = args[1];
+  if (!(callback instanceof Function)) {
+    throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
+  }
+
+  request.get(path, function(err, response, body) {
+    return callback(err, body);
+  });
+};
 
 module.exports = CallByMeaning;

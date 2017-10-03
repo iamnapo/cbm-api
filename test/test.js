@@ -386,12 +386,12 @@ describe('CallByMeaning', function tests() {
   });
 
   describe('.getCode()', function tests() {
-    
+
     it('throws an error if supplied with less than two arguments', function test(done) {
       this.timeout(2000);
       var cbm = new CallByMeaning();
       expect(badValue()).to.throw(Error);
-    
+
       function badValue() {
         return function () {
           cbm.getCode('./js/getTime.js');
@@ -399,7 +399,7 @@ describe('CallByMeaning', function tests() {
       }
       done();
     });
-    
+
     it('throws an error if argument is not a string primitive', function test(done) {
       this.timeout(2000);
       var cbm = new CallByMeaning();
@@ -412,11 +412,11 @@ describe('CallByMeaning', function tests() {
         NaN, [],
         {}
       ];
-    
+
       for (var i = 0; i < values.length; i++) {
         expect(badValue(values[i])).to.throw(TypeError);
       }
-    
+
       function badValue(value) {
         return function () {
           cbm.getCode(value, function () {});
@@ -424,7 +424,7 @@ describe('CallByMeaning', function tests() {
       }
       done();
     });
-    
+
     it('is possible to retrieve code', function test(done) {
       this.timeout(2000);
       var cbm = new CallByMeaning();
@@ -433,7 +433,7 @@ describe('CallByMeaning', function tests() {
         done();
       });
     });
-    
+
   });
 
 });

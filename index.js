@@ -76,8 +76,8 @@ CallByMeaning.prototype.getURI = function () {
   var args = arguments;
   var nargs = args.length;
   var text;
-  if (nargs < 1) {
-    throw new Error('Insufficient input arguments. Must provide an input text.');
+  if (nargs !== 1) {
+    throw new Error('Invalid input arguments. Must provide only an input text.');
   }
   text = args[0];
   if (!(typeof text === 'string')) {
@@ -103,7 +103,7 @@ CallByMeaning.prototype.search = function () {
     throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
   }
   params = args[0];
-  if (!(params instanceof Object)) {
+  if (typeof params !== 'object' || params == null) {
     throw new TypeError('Invalid input argument. Argument must be an object.');
   }
 
@@ -129,7 +129,7 @@ CallByMeaning.prototype.call = function () {
     throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
   }
   params = args[0];
-  if (!(params instanceof Object)) {
+  if (typeof params !== 'object' || params == null) {
     throw new TypeError('Invalid input argument. Argument must be an object.');
   }
 
@@ -152,12 +152,17 @@ CallByMeaning.prototype.call = function () {
 CallByMeaning.prototype.getCode = function () {
   var args = arguments;
   var nargs = args.length;
+  var codeFile;
 
   if (nargs < 2) {
-    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
+    throw new Error('Insufficient input arguments. Must provide a path and a callback function.');
   }
 
-  var path = this.fullAddress(args[0].substring(1));
+  codeFile = args[0];
+  if (!(typeof codeFile === 'string')) {
+    throw new TypeError('Invalid input argument. First argument must be a string primitive. Value: `' + codeFile + '`.');
+  }
+  var path = this.fullAddress(codeFile.substring(1));
   var callback = args[1];
   if (!(callback instanceof Function)) {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');

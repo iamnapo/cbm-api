@@ -82,7 +82,7 @@ describe('CallByMeaning', function tests() {
       done();
     });
 
-    it('throws an error if type argument is not on of c, f, r', function test(done) {
+    it('throws an error if type argument is not one of c, f, r', function test(done) {
       this.timeout(2000);
       var cbm = new CallByMeaning();
       var values = [
@@ -151,6 +151,15 @@ describe('CallByMeaning', function tests() {
       });
     });
 
+    it('looks up a single relation without specified \'r\' type', function test(done) {
+      this.timeout(2000);
+      var cbm = new CallByMeaning();
+      cbm.lookup('unitConversion', function (err, result) {
+        assert(result.statusCode === 200);
+        done();
+      });
+    });
+
   });
 
   describe('.getURI()', function tests() {
@@ -204,6 +213,19 @@ describe('CallByMeaning', function tests() {
   });
 
   describe('.search()', function tests() {
+
+    it('throws an error if supplied with less than required arguments', function test(done) {
+      this.timeout(2000);
+      var cbm = new CallByMeaning();
+      expect(badValue()).to.throw(Error);
+
+      function badValue() {
+        return function () {
+          cbm.search('big dog');
+        };
+      }
+      done();
+    });
 
     it('throws an error if params argument is not an object', function test(done) {
       this.timeout(2000);
@@ -350,6 +372,18 @@ describe('CallByMeaning', function tests() {
         outputNodes: 'time',
         outputUnits: 'seconds'
       }, function (err, response) {
+        assert(response.statusCode === 200);
+        done();
+      });
+    });
+
+    it('is possible to retrieve code', function test(done) {
+      this.timeout(3000);
+      var cbm = new CallByMeaning();
+      cbm.call({
+        outputNodes: 'time',
+        outputUnits: 'seconds'
+      }, true, function (err, response) {
         assert(response.statusCode === 200);
         done();
       });

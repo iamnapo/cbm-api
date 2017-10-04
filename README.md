@@ -1,4 +1,4 @@
-# cbm-api
+# cbm-api    [![Build Status](https://travis-ci.com/iamnapo/cbm-api.svg?token=dPuvXqxKaaMT7sVBkN1H&branch=master)](https://travis-ci.com/iamnapo/cbm-api) [![codecov](https://codecov.io/gh/iamnapo/cbm-api/branch/master/graph/badge.svg?token=CSMrm2a8S1)](https://codecov.io/gh/iamnapo/cbm-api)
 
 Node.js interface to the CallByMeaning network server. For further information, consult the website of the server-side project: [CallByMeaning](https://github.com/iamnapo/CallByMeaning).
 

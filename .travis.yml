@@ -8,3 +8,7 @@ node_js:
 - node
 notifications:
   email: false
+after_success:
+- istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec
+- ./node_modules/.bin/codecov --token:c323c7fb-dafb-4f1c-acd0-8ec7af23c607
+sudo: false

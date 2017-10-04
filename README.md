@@ -24,19 +24,17 @@ The module exports a single constructor which can be used to open an API connect
 var cbm = CallByMeaning();
 ```
 
-In case that you are running your own copy of the CallByMeaning server, the constructor takes the hostname of the server as an optional argument. The default option evaluates to "[http://localhost](http://localhost)".
+In case that you are running your own copy of the CallByMeaning server, the constructor takes the hostname of the server as an optional argument. The default option evaluates to "[https://call-by-meaning.herokuapp.com](https://call-by-meaning.herokuapp.com/)".
 
 ```javascript
-CallByMeaning('<host>', <port>);
+CallByMeaning(host);
 ```
 
 Example:
 
 ```javascript
-var cbm = CallByMeaning('192.168.1.1', 8080);
+var cbm = CallByMeaning('192.168.1.1');
 ```
-
->Note: you can modify only one argument by just passing `null` to the other.
 
 We can then use the following three methods to query the CallByMeaning API:
 
@@ -45,13 +43,13 @@ We can then use the following three methods to query the CallByMeaning API:
 ### `.lookup(uri[, type], callback)`
 
 This method expects a valid CallByMeaning URI as its first argument.
-`type` is an (optional) string that specifies the type of the GET request. It can have the keys *c*, *f* and *r*. The `callback` function has three parameters: The *err* parameter will return error objects in case that something goes
-wrong during the function invocation. If the query is successful, *err* is `undefined` and the *response* parameter holds server's response. The *body* parameter hold the result set from the query.
+`type` is an (optional) string that specifies the type of the GET request. It can have the keys `c`, `f` or `r`. The `callback` function has three parameters: The `err` parameter will return error objects in case that something goes
+wrong during the function invocation. If the query is successful, `err` is `undefined` and the `response` parameter holds server's response. The `body` parameter holds the result set from the query.
 
 Example code:
 
 ```javascript
-cbm.lookup( 'zodiac', 'c', function (err, response, body {
+cbm.lookup( 'zodiac', 'c', function (err, response, body) {
   // insert code here
 });
 ```
@@ -74,10 +72,10 @@ Example code:
 
 ```javascript
 cbm.search({
-  "inputNodes": "date",
-  "inputUnits": "date",
-  "outputNodes": "time",
-  "outputUnits": "seconds"
+  'inputNodes': 'date',
+  'inputUnits': 'date',
+  'outputNodes': 'time',
+  'outputUnits': 'seconds'
 }, function (err, response, body) {
   // insert code here
 });
@@ -85,18 +83,18 @@ cbm.search({
 
 ### `.call(params[, returncode], callback)`
 
-The call method takes a parameter object and after finding an appropriate function - a function with the same concepts as inputs and outputs, but in different units, that is - runs it an passes the result to the callback function. If the (optional) argument `returncode` is set to true, it instead passes the .js file's location and the description of the function.
+The call method takes a parameter object and after finding an appropriate function - a function with the same concepts as inputs and outputs, but in different units, that is - runs it an passes the result to the callback function. If the (optional) argument `returncode` is set to true, it instead passes the .js file's location and the description of the function. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/docs).
 
 Example code:
 
 ```javascript
 var bday = new Date(1994, 3, 24);
 cbm.call({
-  "inputNodes": "date",
-  "inputUnits": "date",
-  "inputVars": bday,
-  "outputNodes": "time",
-  "outputUnits": "seconds"
+  'inputNodes': 'date',
+  'inputUnits': 'date',
+  'inputVars': bday,
+  'outputNodes': 'time',
+  'outputUnits': 'seconds'
 }, function (err, response, body) {
   // insert code here
 });

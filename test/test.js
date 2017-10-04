@@ -25,37 +25,21 @@ describe('CallByMeaning', function tests() {
     describe('defaults', function tests() {
       it('has default hostname', function test(done) {
         var cbm = new CallByMeaning();
-        assert(cbm.host === 'http://localhost');
+        assert(cbm.host === 'https://call-by-meaning.herokuapp.com');
         done();
       });
 
-      it('has default port', function test(done) {
-        var cbm = new CallByMeaning();
-        assert(cbm.port === 3000);
-        done();
-      });
     });
 
     describe('override', function () {
       it('has set hostname', function test(done) {
-        var cbm = new CallByMeaning('10.0.0.1', 1234);
+        var cbm = new CallByMeaning('10.0.0.1');
         assert(cbm.host === '10.0.0.1');
         done();
       });
 
-      it('has set port', function test(done) {
-        var cbm = new CallByMeaning('10.0.0.1', 1234);
-        assert(cbm.port === 1234);
-        done();
-      });
-
-      it('only overrides the version', function test(done) {
-        var cbm = new CallByMeaning(null, 50);
-        assert(cbm.host === 'http://localhost');
-        assert(cbm.port === 50);
-        done();
-      });
     });
+
   });
 
   describe('.lookup()', function tests() {

@@ -3,18 +3,16 @@
 var request = require('request');
 var stemmer = require('stemmer');
 
-function CallByMeaning(host, port) {
+function CallByMeaning(host) {
   if (!(this instanceof CallByMeaning)) {
-    return new CallByMeaning(host, port);
+    return new CallByMeaning(host);
   }
-  this.host = host || 'http://localhost';
-  this.port = parseInt(port || 3000);
+  this.host = host || 'https://call-by-meaning.herokuapp.com';
 }
 
 CallByMeaning.prototype.fullAddress = function (path) {
   var address = '';
   address += this.host;
-  address += ':' + this.port;
   address += path;
   return address;
 };

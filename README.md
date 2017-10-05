@@ -36,7 +36,7 @@ Example:
 var cbm = CallByMeaning('192.168.1.1');
 ```
 
-We can then use the following three methods to query the CallByMeaning API:
+We can then use the following five methods to query the CallByMeaning API:
 
 ## Methods
 

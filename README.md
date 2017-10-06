@@ -49,7 +49,7 @@ wrong during the function invocation. If the query is successful, `err` is `unde
 Example code:
 
 ```javascript
-cbm.lookup( 'zodiac', 'c', function (err, response, body) {
+cbm.lookup('zodiac', 'c', function (err, response, body) {
   // insert code here
 });
 ```
@@ -66,7 +66,7 @@ cbm.getURI('a (big) dog!'); //-> big_dog
 
 ### `.search(params, callback)`
 
-The search method takes a parameter object and hands the retrieved results to the callback function. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/docs).
+The search method takes a parameter object and hands the retrieved results to the callback function. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/blob/master/docs/GETBYMEANING.md).
 
 Example code:
 
@@ -83,7 +83,7 @@ cbm.search({
 
 ### `.call(params[, returncode], callback)`
 
-The call method takes a parameter object and after finding an appropriate function - a function with the same concepts as inputs and outputs, but in different units, that is - runs it an passes the result to the callback function. If the (optional) argument `returncode` is set to true, it instead passes the .js file's location and the description of the function. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/docs).
+The call method takes a parameter object and after finding an appropriate function - a function with the same concepts as inputs and outputs, but (maybe) in different units, that is - executes it and passes the result to the callback function. If the (optional) argument `returncode` is set to true, it instead passes the .js file's location and the description of the function. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/blob/master/docs/CALLBYMEANING.md).
 
 Example code:
 
@@ -100,14 +100,14 @@ cbm.call({
 });
 ```
 
-### `.getCode(location, callback)`
+### `.getCode(path, callback)`
 
-This method acts as a small helper to the `.search` and `.call` methods. It takes the `location` of a .js file and passes its code in plain text into the callback.
+This method acts as a small helper to the usage of `.search` and `.call` methods. It takes the `path` of a .js file in the server and passes its code in plain text into the callback.
 
 Example code:
 
 ```javascript
-cbm.getCode('./js/getTime.js', function (err, result) {
+cbm.getCode('/js/getTime.js', function (err, result) {
   // insert code here
 });
 ```

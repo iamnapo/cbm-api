@@ -160,6 +160,15 @@ describe('CallByMeaning', function tests() {
       });
     });
 
+    it('returns correctly if it can\'t find the object in the server' , function test(done) {
+      this.timeout(2000);
+      var cbm = new CallByMeaning();
+      cbm.lookup('blabla', function (err, result) {
+        assert(result.statusCode === 418);
+        done();
+      });
+    });
+
   });
 
   describe('.getURI()', function tests() {
@@ -438,6 +447,31 @@ describe('CallByMeaning', function tests() {
       function badValue(value) {
         return function () {
           cbm.getCode(value, function () {});
+        };
+      }
+      done();
+    });
+
+    it('throws an error if callback argument is not a function', function test(done) {
+      this.timeout(2000);
+      var cbm = new CallByMeaning();
+      var values = [
+        '5',
+        5,
+        true,
+        undefined,
+        null,
+        NaN, [],
+        {}
+      ];
+
+      for (var i = 0; i < values.length; i++) {
+        expect(badValue(values[i])).to.throw(TypeError);
+      }
+
+      function badValue(value) {
+        return function () {
+          cbm.getCode('./js/getTime.js', value);
         };
       }
       done();

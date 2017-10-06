@@ -62,7 +62,9 @@ CallByMeaning.prototype.lookup = function () {
           if (response.statusCode === 200) {
             return callback(err, response, body);
           } else {
-            return {};
+            body = 'Couldn\'t find that in DB.';
+            response.body = body;
+            return callback(err, response, body);
           }
         });
       });

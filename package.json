@@ -20,13 +20,13 @@
   },
   "homepage": "https://github.com/iamnapo/cbm-api#readme",
   "dependencies": {
-    "request": "^2.83.0",
-    "stemmer": "^1.0.1"
+    "natural": "^0.5.4",
+    "request": "^2.83.0"
   },
   "private": true,
   "devDependencies": {
     "chai": "^4.1.2",
-    "codecov": "^2.3.0",
+    "codecov": "^2.3.1",
     "istanbul": "^0.4.5",
     "mocha": "^4.0.0"
   }

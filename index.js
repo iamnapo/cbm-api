@@ -1,7 +1,7 @@
 'use strict';
 
 var request = require('request');
-var stemmer = require('stemmer');
+var natural = require('natural');
 
 function CallByMeaning(host) {
   if (!(this instanceof CallByMeaning)) {
@@ -84,11 +84,10 @@ CallByMeaning.prototype.getURI = function () {
     throw new TypeError('Invalid input argument. Argument must be a string primitive. Value: `' + text + '`.');
   }
   text = text.replace(/[^\w\d\s]/g, '');
-  let stemmed = stemmer(text);
-  stemmed = stemmed.replace(',', ' ');
-  stemmed = stemmed.split(' ');
+  let tokenizer = natural.WordTokenizer();
+  let stemmed = tokenizer.tokenize(text);
   stemmed = stemmed.filter(function (item) {
-    return (item !== '') && (item !== ',') && (item !== 'a') && (item !== 'the') && (item !== 'an');
+    return (item !== 'a') && (item !== 'the') && (item !== 'an');
   });
   return stemmed.join('_');
 };

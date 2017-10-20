@@ -296,7 +296,7 @@ describe('CallByMeaning', function tests() {
         outputNodes: 'time',
         outputUnits: 'seconds'
       }, function (err, result, body) {
-        assert(body.desc === 'This function returns the current time in seconds since 01/01/1970');
+        assert(body[0].desc === 'This function returns the current time in seconds since 01/01/1970');
         done();
       });
     });

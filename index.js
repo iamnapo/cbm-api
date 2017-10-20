@@ -84,7 +84,7 @@ CallByMeaning.prototype.getURI = function () {
     throw new TypeError('Invalid input argument. Argument must be a string primitive. Value: `' + text + '`.');
   }
   text = text.replace(/[^\w\d\s]/g, '');
-  let tokenizer = natural.WordTokenizer();
+  let tokenizer = new natural.WordTokenizer();
   let stemmed = tokenizer.tokenize(text);
   stemmed = stemmed.filter(function (item) {
     return (item !== 'a') && (item !== 'the') && (item !== 'an');

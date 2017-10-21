@@ -49,7 +49,7 @@ wrong during the function invocation. If the query is successful, `err` is `unde
 Example code:
 
 ```javascript
-cbm.lookup('zodiac', 'c', function (err, response, body) {
+cbm.lookup('time', 'c', function (err, response, body) {
   // insert code here
 });
 ```
@@ -73,9 +73,7 @@ Example code:
 ```javascript
 cbm.search({
   'inputNodes': 'date',
-  'inputUnits': 'date',
-  'outputNodes': 'time',
-  'outputUnits': 'seconds'
+  'outputNodes': 'time'
 }, function (err, response, body) {
   // insert code here
 });

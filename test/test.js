@@ -482,7 +482,6 @@ describe('CallByMeaning', function tests() {
       this.timeout(TIMEOUT_TIME);
       var cbm = new CallByMeaning();
       cbm.getCode('./js/now.js', function(err, result) {
-        console.log(result);
         assert(result.includes('module.exports'));
         done();
       });

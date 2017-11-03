@@ -146,7 +146,7 @@ describe('CallByMeaning', function tests() {
     it('looks up a single function without specified \'f\' type', function test(done) {
       this.timeout(TIMEOUT_TIME);
       var cbm = new CallByMeaning();
-      cbm.lookup('getTime', function (err, result) {
+      cbm.lookup('now', function (err, result) {
         assert(result.statusCode === 200);
         done();
       });
@@ -283,7 +283,7 @@ describe('CallByMeaning', function tests() {
         return function () {
           cbm.search({
             outputNodes: 'time',
-            outputUnits: 'seconds'
+            outputUnits: 'milliseconds'
           }, value);
         };
       }
@@ -295,9 +295,9 @@ describe('CallByMeaning', function tests() {
       var cbm = new CallByMeaning();
       cbm.search({
         outputNodes: 'time',
-        outputUnits: 'seconds'
+        outputUnits: 'milliseconds'
       }, function (err, result, body) {
-        assert(body[0].desc === 'This function returns the current time in seconds since 01/01/1970');
+        assert(body[0].desc === 'Gets the timestamp of the number of milliseconds that have elapsed since the Unix epoch (1 January 1970 00:00:00 UTC).');
         done();
       });
     });
@@ -315,7 +315,7 @@ describe('CallByMeaning', function tests() {
         return function () {
           cbm.call({
             outputNodes: 'time',
-            outputUnits: 'seconds'
+            outputUnits: 'milliseconds'
           });
         };
       }
@@ -368,7 +368,7 @@ describe('CallByMeaning', function tests() {
         return function () {
           cbm.call({
             outputNodes: 'time',
-            outputUnits: 'seconds'
+            outputUnits: 'milliseconds'
           }, value);
         };
       }
@@ -380,7 +380,7 @@ describe('CallByMeaning', function tests() {
       var cbm = new CallByMeaning();
       cbm.call({
         outputNodes: 'time',
-        outputUnits: 'seconds'
+        outputUnits: 'milliseconds'
       }, function (err, response) {
         assert(response.statusCode === 200);
         done();
@@ -392,7 +392,7 @@ describe('CallByMeaning', function tests() {
       var cbm = new CallByMeaning();
       cbm.call({
         outputNodes: 'time',
-        outputUnits: 'seconds'
+        outputUnits: 'milliseconds'
       }, true, function (err, response) {
         assert(response.statusCode === 200);
         done();
@@ -422,7 +422,7 @@ describe('CallByMeaning', function tests() {
 
       function badValue() {
         return function () {
-          cbm.getCode('./js/getTime.js');
+          cbm.getCode('./js/now.js');
         };
       }
       done();
@@ -472,7 +472,7 @@ describe('CallByMeaning', function tests() {
 
       function badValue(value) {
         return function () {
-          cbm.getCode('./js/getTime.js', value);
+          cbm.getCode('./js/now.js', value);
         };
       }
       done();
@@ -481,7 +481,8 @@ describe('CallByMeaning', function tests() {
     it('is possible to retrieve code', function test(done) {
       this.timeout(TIMEOUT_TIME);
       var cbm = new CallByMeaning();
-      cbm.getCode('./js/getTime.js', function(err, result) {
+      cbm.getCode('./js/now.js', function(err, result) {
+        console.log(result);
         assert(result.includes('module.exports'));
         done();
       });

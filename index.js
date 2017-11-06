@@ -2,19 +2,18 @@
 
 var request = require('request');
 var natural = require('natural');
+var pipe = require('./lib/jsonfn');
 
 function CallByMeaning(host) {
   if (!(this instanceof CallByMeaning)) {
     return new CallByMeaning(host);
   }
-  this.host = host || 'https://call-by-meaning.herokuapp.com';
+  this.host = 'https://call-by-meaning.herokuapp.com';
+  if (host) this.host = String(host);
 }
 
-CallByMeaning.prototype.fullAddress = function (path) {
-  var address = '';
-  address += this.host;
-  address += path;
-  return address;
+CallByMeaning.prototype._fullAddress = function (path) {
+  return this.host.concat(path);
 };
 
 CallByMeaning.prototype.lookup = function () {
@@ -30,6 +29,7 @@ CallByMeaning.prototype.lookup = function () {
   if (!(typeof uri === 'string')) {
     throw new TypeError('Invalid input argument. First argument must be a string primitive. Value: `' + uri + '`.');
   }
+
   if (nargs < 3) {
     type = 'all';
     callback = args[1];
@@ -47,27 +47,128 @@ CallByMeaning.prototype.lookup = function () {
 
   if (type !== 'all') {
     let path = '/gbn/' + type + '/' + String(encodeURIComponent(uri));
-    request.get({uri: this.fullAddress(path), json: true}, function (err, response, body) {
-      return callback(err, response, body);
+    request.get({uri: this._fullAddress(path), json: true}, function (err, response, body) {
+      if (response.statusCode === 200) {
+        let result;
+        switch (type) {
+        case 'c':
+          result = {
+            name: body.name,
+            description: body.desc,
+            units: body.units,
+            asInput: body.func_arg.map(function (obj) {
+              let temp = {
+                name: obj.name,
+                unit: obj.unitType,
+              };
+              return temp;
+            }),
+            asOutput: body.func_res.map(function (obj) {
+              let temp = {
+                name: obj.name,
+                unit: obj.unitType,
+              };
+              return temp;
+            })
+          };
+          break;
+        case 'f':
+          result = {
+            name: body.name,
+            description: body.desc,
+            units: body.units,
+            argsNames: body.argsNames,
+            argsUnits: body.argsUnits,
+            returnsNames: body.returnsNames,
+            returnsUnits: body.returnsUnits,
+            sourceCode: body.codeFile
+          };
+          break;
+        case 'r':
+          result = {
+            name: body.name,
+            description: body.desc,
+            connections: body.connects.map(function (obj) {
+              var temp = {
+                start: obj.start.name,
+                end: obj.end.name,
+                mathRelation: obj.mathRelation
+              };
+              return temp;
+            })
+          };
+          break;
+        }
+        callback(err, result, response.statusCode);
+      } else {
+        let result = new Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
+        callback(err, result, response.statusCode);
+      }
     });
   } else {
-    var path_c = this.fullAddress('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
-    var path_f = this.fullAddress('/gbn/' + 'f' + '/' + String(encodeURIComponent(uri)));
-    var path_r = this.fullAddress('/gbn/' + 'r' + '/' + String(encodeURIComponent(uri)));
+    var path_c = this._fullAddress('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
+    var path_f = this._fullAddress('/gbn/' + 'f' + '/' + String(encodeURIComponent(uri)));
+    var path_r = this._fullAddress('/gbn/' + 'r' + '/' + String(encodeURIComponent(uri)));
     request.get({uri: path_c, json: true}, function (err, response, body) {
-      if (response.statusCode === 200) return callback(err, response, body);
-      request.get({uri: path_f, json: true}, function (err, response, body) {
-        if (response.statusCode === 200) return callback(err, response, body);
-        request.get({uri: path_r, json: true}, function (err, response, body) {
+      if (response.statusCode === 200) {
+        let result =  {
+          name: body.name,
+          description: body.desc,
+          units: body.units,
+          asInput: body.func_arg.map(function (obj) {
+            let temp = {
+              name: obj.name,
+              unit: obj.unitType,
+            };
+            return temp;
+          }),
+          asOutput: body.func_res.map(function (obj) {
+            let temp = {
+              name: obj.name,
+              unit: obj.unitType,
+            };
+            return temp;
+          })
+        };
+        callback(err, result, response.statusCode);
+      } else {
+        request.get({ uri: path_f, json: true }, function (err, response, body) {
           if (response.statusCode === 200) {
-            return callback(err, response, body);
+            let result = {
+              name: body.name,
+              description: body.desc,
+              units: body.units,
+              argsNames: body.argsNames,
+              argsUnits: body.argsUnits,
+              returnsNames: body.returnsNames,
+              returnsUnits: body.returnsUnits,
+              sourceCode: body.codeFile
+            };
+            callback(err, result, response.statusCode);
           } else {
-            body = 'Couldn\'t find that in DB.';
-            response.body = body;
-            return callback(err, response, body);
+            request.get({ uri: path_r, json: true }, function (err, response, body) {
+              if (response.statusCode === 200) {
+                let result = {
+                  name: body.name,
+                  description: body.desc,
+                  connections: body.connects.map(function (obj) {
+                    var temp = {
+                      start: obj.start.name,
+                      end: obj.end.name,
+                      mathRelation: obj.mathRelation
+                    };
+                    return temp;
+                  })
+                };
+                callback(err, result, response.statusCode);
+              } else {
+                let result = new Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
+                callback(err, result, response.statusCode);
+              }
+            });
           }
         });
-      });
+      }
     });
   }
 };
@@ -111,9 +212,16 @@ CallByMeaning.prototype.search = function () {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
-  var path = this.fullAddress('/gbm/search/');
+  var path = this._fullAddress('/gbm/search/');
   request.post({uri: path, form: params, json: true}, function (err, response, body) {
-    return callback(err, response, body);
+    let result = body.map(function (obj) {
+      let temp = {
+        function: obj.function.split('/').pop(),
+        description: obj.desc
+      };
+      return temp;
+    });
+    callback(err, result, response.statusCode);
   });
 };
 
@@ -142,9 +250,14 @@ CallByMeaning.prototype.call = function () {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
-  var path = this.fullAddress('/cbm/call/');
+  var path = this._fullAddress('/cbm/call/');
+  var caller = this;
   request.post({uri: path, headers: {returncode: returnCode}, form: params, json: true}, function (err, response, body) {
-    return callback(err, response, body);
+    if (returnCode) {
+      caller.getCode(body.function, callback);
+    } else {
+      callback(err, pipe.parse(body), response.statusCode);
+    }
   });
 };
 
@@ -161,14 +274,21 @@ CallByMeaning.prototype.getCode = function () {
   if (!(typeof codeFile === 'string')) {
     throw new TypeError('Invalid input argument. First argument must be a string primitive. Value: `' + codeFile + '`.');
   }
-  var path = this.fullAddress(codeFile.substring(1));
+  
+  var path;
+  if (codeFile.indexOf('/js') > -1 || codeFile.indexOf('/internal') > -1) {
+    path = this._fullAddress(codeFile.substring(1));
+  } else {
+    path = codeFile[0] === '_' ? this._fullAddress('/js/internal' + codeFile) : this._fullAddress('/js/' + codeFile);
+  }
+
   var callback = args[1];
   if (!(callback instanceof Function)) {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
   request.get(path, function (err, response, body) {
-    return callback(err, body);
+    callback(err, String(body), response.statusCode);
   });
 };
 

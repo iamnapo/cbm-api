@@ -139,7 +139,34 @@ describe('CallByMeaning', function tests() {
     it('looks up a single concept', function test(done) {
       this.timeout(TIMEOUT_TIME);
       var cbm = new CallByMeaning(HOST);
-      cbm.lookup('time', 'c', function (err, result, status) {
+      cbm.lookup('function', 'c', function (err, result, status) {
+        assert(status === 200);
+        done();
+      });
+    });
+
+    it('looks up a single function', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      var cbm = new CallByMeaning(HOST);
+      cbm.lookup('add', 'f', function (err, result, status) {
+        assert(status === 200);
+        done();
+      });
+    });
+
+    it('looks up a single relation', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      var cbm = new CallByMeaning(HOST);
+      cbm.lookup('unitConversion', 'r', function (err, result, status) {
+        assert(status === 200);
+        done();
+      });
+    });
+
+    it('looks up a single concept without specified \'c\' type', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      var cbm = new CallByMeaning(HOST);
+      cbm.lookup('function', function (err, result, status) {
         assert(status === 200);
         done();
       });
@@ -163,7 +190,16 @@ describe('CallByMeaning', function tests() {
       });
     });
 
-    it('returns correctly if it can\'t find the object in the server' , function test(done) {
+    it('returns correctly if it can\'t find the object in the server (with specified type)', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      var cbm = new CallByMeaning();
+      cbm.lookup('blabla', 'c', function (err, result, status) {
+        assert(status === 418 && (typeof result) === 'object');
+        done();
+      });
+    });
+
+    it('returns correctly if it can\'t find the object in the server (without specified type)' , function test(done) {
       this.timeout(TIMEOUT_TIME);
       var cbm = new CallByMeaning();
       cbm.lookup('blabla', function (err, result, status) {
@@ -484,10 +520,19 @@ describe('CallByMeaning', function tests() {
       done();
     });
 
-    it('is possible to retrieve code', function test(done) {
+    it('is possible to retrieve code if input is a path', function test(done) {
       this.timeout(TIMEOUT_TIME);
       var cbm = new CallByMeaning(HOST);
       cbm.getCode('./js/now.js', function(err, result) {
+        assert(result.includes('module.exports'));
+        done();
+      });
+    });
+
+    it('is possible to retrieve code if input is filename', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      var cbm = new CallByMeaning(HOST);
+      cbm.getCode('now.js', function (err, result) {
         assert(result.includes('module.exports'));
         done();
       });

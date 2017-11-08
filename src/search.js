@@ -1,12 +1,13 @@
+/* eslint no-invalid-this: "off" */
+
 'use strict';
 
-var request = require('request');
+const request = require('request');
 
-function search() {
-  var args = arguments;
-  var nargs = args.length;
-  var params;
-  var callback;
+function search(...args) {
+  let nargs = args.length;
+  let params;
+  let callback;
 
   if (nargs < 2) {
     throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
@@ -21,12 +22,12 @@ function search() {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
-  var path = this._fullAddress('/gbm/search/');
-  request.post({uri: path, form: params, json: true}, function (err, response, body) {
-    let result = body.map(function (obj) {
+  let path = this._fullAddress('/gbm/search/');
+  request.post({uri: path, form: params, json: true}, (err, response, body) => {
+    let result = body.map((obj) => {
       let temp = {
         function: obj.function.split('/').pop(),
-        description: obj.desc
+        description: obj.desc,
       };
       return temp;
     });

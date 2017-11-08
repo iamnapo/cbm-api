@@ -8,7 +8,9 @@ function CallByMeaning(host) {
   if (host) this.host = String(host);
 }
 
-CallByMeaning.prototype._fullAddress = function (path) {return this.host.concat(path);};
+CallByMeaning.prototype._fullAddress = function(path) {
+  return this.host.concat(path);
+};
 CallByMeaning.prototype.lookup = require('./src/lookup');
 CallByMeaning.prototype.getURI = require('./src/getURI');
 CallByMeaning.prototype.search = require('./src/search');

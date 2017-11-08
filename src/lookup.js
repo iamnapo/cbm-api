@@ -1,11 +1,14 @@
+/* eslint no-invalid-this: "off" */
+
 'use strict';
 
-var request = require('request');
+const request = require('request');
 
-function lookup () {
-  var args = arguments;
-  var nargs = args.length;
-  var uri, type, callback;
+function lookup(...args) {
+  let nargs = args.length;
+  let uri;
+  let type;
+  let callback;
 
   if (nargs < 2) {
     throw new Error('Insufficient input arguments. Must provide a CallByMeaning URI and a callback function.');
@@ -33,7 +36,7 @@ function lookup () {
 
   if (type !== 'all') {
     let path = '/gbn/' + type + '/' + String(encodeURIComponent(uri));
-    request.get({ uri: this._fullAddress(path), json: true }, function (err, response, body) {
+    request.get({uri: this._fullAddress(path), json: true}, (err, response, body) => {
       if (response.statusCode === 200) {
         let result;
         switch (type) {
@@ -42,20 +45,20 @@ function lookup () {
             name: body.name,
             description: body.desc,
             units: body.units,
-            asInput: body.func_arg.map(function (obj) {
+            asInput: body.func_arg.map((obj) => {
               let temp = {
                 name: obj.name,
                 unit: obj.unitType,
               };
               return temp;
             }),
-            asOutput: body.func_res.map(function (obj) {
+            asOutput: body.func_res.map((obj) => {
               let temp = {
                 name: obj.name,
                 unit: obj.unitType,
               };
               return temp;
-            })
+            }),
           };
           break;
         case 'f':
@@ -67,58 +70,58 @@ function lookup () {
             argsUnits: body.argsUnits,
             returnsNames: body.returnsNames,
             returnsUnits: body.returnsUnits,
-            sourceCode: body.codeFile
+            sourceCode: body.codeFile,
           };
           break;
         case 'r':
           result = {
             name: body.name,
             description: body.desc,
-            connections: body.connects.map(function (obj) {
-              var temp = {
+            connections: body.connects.map((obj) => {
+              let temp = {
                 start: obj.start.name,
                 end: obj.end.name,
-                mathRelation: obj.mathRelation
+                mathRelation: obj.mathRelation,
               };
               return temp;
-            })
+            }),
           };
           break;
         }
         callback(err, result, response.statusCode);
       } else {
-        let result = new Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
+        let result = Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
         callback(err, result, response.statusCode);
       }
     });
   } else {
-    var path_c = this._fullAddress('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
-    var path_f = this._fullAddress('/gbn/' + 'f' + '/' + String(encodeURIComponent(uri)));
-    var path_r = this._fullAddress('/gbn/' + 'r' + '/' + String(encodeURIComponent(uri)));
-    request.get({ uri: path_c, json: true }, function (err, response, body) {
+    let pathC = this._fullAddress('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
+    let pathF = this._fullAddress('/gbn/' + 'f' + '/' + String(encodeURIComponent(uri)));
+    let pathR = this._fullAddress('/gbn/' + 'r' + '/' + String(encodeURIComponent(uri)));
+    request.get({uri: pathC, json: true}, (err, response, body) => {
       if (response.statusCode === 200) {
         let result = {
           name: body.name,
           description: body.desc,
           units: body.units,
-          asInput: body.func_arg.map(function (obj) {
+          asInput: body.func_arg.map((obj) => {
             let temp = {
               name: obj.name,
               unit: obj.unitType,
             };
             return temp;
           }),
-          asOutput: body.func_res.map(function (obj) {
+          asOutput: body.func_res.map((obj) => {
             let temp = {
               name: obj.name,
               unit: obj.unitType,
             };
             return temp;
-          })
+          }),
         };
         callback(err, result, response.statusCode);
       } else {
-        request.get({ uri: path_f, json: true }, function (err, response, body) {
+        request.get({uri: pathF, json: true}, (err, response, body) => {
           if (response.statusCode === 200) {
             let result = {
               name: body.name,
@@ -128,27 +131,27 @@ function lookup () {
               argsUnits: body.argsUnits,
               returnsNames: body.returnsNames,
               returnsUnits: body.returnsUnits,
-              sourceCode: body.codeFile
+              sourceCode: body.codeFile,
             };
             callback(err, result, response.statusCode);
           } else {
-            request.get({ uri: path_r, json: true }, function (err, response, body) {
+            request.get({uri: pathR, json: true}, (err, response, body) => {
               if (response.statusCode === 200) {
                 let result = {
                   name: body.name,
                   description: body.desc,
-                  connections: body.connects.map(function (obj) {
-                    var temp = {
+                  connections: body.connects.map((obj) => {
+                    let temp = {
                       start: obj.start.name,
                       end: obj.end.name,
-                      mathRelation: obj.mathRelation
+                      mathRelation: obj.mathRelation,
                     };
                     return temp;
-                  })
+                  }),
                 };
                 callback(err, result, response.statusCode);
               } else {
-                let result = new Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
+                let result = Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
                 callback(err, result, response.statusCode);
               }
             });

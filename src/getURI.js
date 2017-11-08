@@ -1,11 +1,12 @@
 'use strict';
 
-var natural = require('natural');
+const natural = require('natural');
+const tokenizer = new natural.WordTokenizer();
 
-function getURI() {
-  var args = arguments;
-  var nargs = args.length;
-  var text;
+function getURI(...args) {
+  let nargs = args.length;
+  let text;
+
   if (nargs !== 1) {
     throw new Error('Invalid input arguments. Must provide only an input text.');
   }
@@ -14,9 +15,8 @@ function getURI() {
     throw new TypeError('Invalid input argument. Argument must be a string primitive. Value: `' + text + '`.');
   }
   text = text.replace(/[^\w\d\s]/g, '');
-  let tokenizer = new natural.WordTokenizer();
   let stemmed = tokenizer.tokenize(text);
-  stemmed = stemmed.filter(function (item) {
+  stemmed = stemmed.filter((item) => {
     return (item !== 'a') && (item !== 'the') && (item !== 'an');
   });
   return stemmed.join('_');

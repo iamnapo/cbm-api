@@ -21,7 +21,8 @@
   "homepage": "https://github.com/iamnapo/cbm-api#readme",
   "dependencies": {
     "natural": "^0.5.4",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "sync-request": "^4.1.0"
   },
   "private": true,
   "devDependencies": {

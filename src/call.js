@@ -1,14 +1,14 @@
+/* eslint no-invalid-this: "off" */
 'use strict';
 
-var request = require('request');
-var pipe = require('../lib/jsonfn');
+const request = require('request');
+const pipe = require('../lib/jsonfn');
 
-function call() {
-  var args = arguments;
-  var nargs = args.length;
-  var params;
-  var callback;
-  var returnCode = false;
+function call(...args) {
+  let nargs = args.length;
+  let params;
+  let callback;
+  let returnCode = false;
 
   if (nargs < 2) {
     throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
@@ -28,9 +28,9 @@ function call() {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
-  var path = this._fullAddress('/cbm/call/');
-  var caller = this;
-  request.post({ uri: path, headers: { returncode: returnCode }, form: params, json: true }, function (err, response, body) {
+  let path = this._fullAddress('/cbm/call/');
+  let caller = this;
+  request.post({uri: path, headers: {returncode: returnCode}, form: params, json: true}, (err, response, body) => {
     if (returnCode) {
       caller.getCode(body.function, callback);
     } else {

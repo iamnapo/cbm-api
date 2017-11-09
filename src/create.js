@@ -14,8 +14,7 @@ function createNode(params, host) {
       units: params.units,
     },
   });
-  if (res.statusCode === 200) return true;
-  return false;
+  return res.statusCode === 200;
 }
 
 function createFunction(params, host) {
@@ -32,8 +31,7 @@ function createFunction(params, host) {
       codeFile: params.codeFile,
     },
   });
-  if (res.statusCode === 200) return true;
-  return false;
+  return res.statusCode === 200;
 }
 
 function createRelation(params, host) {
@@ -48,8 +46,7 @@ function createRelation(params, host) {
       mathRelation: params.mathRelation,
     },
   });
-  if (res.statusCode === 200) return true;
-  return false;
+  return res.statusCode === 200;
 }
 
 function create(...args) {
@@ -84,8 +81,6 @@ function create(...args) {
     break;
   case 'relation':
     created = createRelation(params, this.host);
-    break;
-  default:
     break;
   }
   let path = this.host.concat('/new/fix');

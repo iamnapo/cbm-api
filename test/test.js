@@ -1,5 +1,6 @@
 /* eslint-env node, mocha */
 /* eslint no-invalid-this: "off" */
+/* eslint new-cap: "off" */
 
 'use strict';
 
@@ -7,10 +8,21 @@ require('dotenv').load();
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
+const request = require('sync-request');
 const CallByMeaning = require('../index.js');
 
 const TIMEOUT_TIME = 3000;
 const HOST = process.env.HOST || 'https://call-by-meaning.herokuapp.com';
+
+function sleep(milliseconds) {
+  let start = new Date().getTime();
+  for (let i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds) {
+      break;
+    }
+  }
+}
+const SLEEP_TIME = 1000;
 
 describe('CallByMeaning', function tests() {
   describe('Initial config', function test() {
@@ -21,7 +33,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('can be invoked without new', function test(done) {
-      const cbm = new CallByMeaning(HOST);
+      const cbm = CallByMeaning(HOST);
       assert(cbm instanceof CallByMeaning);
       done();
     });
@@ -438,7 +450,7 @@ describe('CallByMeaning', function tests() {
           outputNodes: 'time',
           outputUnits: 'milliseconds',
         }, function(err, result2, status2) {
-          assert((status === status2 && status === 200) && result2 - 3600000 * result < 1000);
+          assert((status === status2 && status === 200) && result2 - 3600000 * result < 2000);
           done();
         });
       });
@@ -525,6 +537,145 @@ describe('CallByMeaning', function tests() {
         assert(result.includes('module.exports'));
         done();
       });
+    });
+  });
+
+  describe('.create()', function tests() {
+    it('throws an error if not supplied at least one argument', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      const cbm = new CallByMeaning(HOST);
+      expect(badValue()).to.throw(Error);
+
+      function badValue() {
+        return function() {
+          cbm.create();
+        };
+      }
+      done();
+    });
+
+    it('throws an error if params argument is not an object', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      const cbm = new CallByMeaning(HOST);
+      let values = [
+        function() { },
+        5,
+        true,
+        undefined,
+        NaN,
+        'test',
+      ];
+
+      for (let i = 0; i < values.length; i++) {
+        expect(badValue(values[i])).to.throw(TypeError);
+      }
+
+      function badValue(value) {
+        return function() {
+          cbm.create(value);
+        };
+      }
+      done();
+    });
+
+    it('throws an error if type argument is not one of node, function, relation', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      const cbm = new CallByMeaning();
+      let values = [
+        function() { },
+        '5',
+        5,
+        true,
+        undefined,
+        null,
+        NaN, [],
+        {},
+      ];
+
+      for (let i = 0; i < values.length; i++) {
+        expect(badValue(values[i])).to.throw(TypeError);
+      }
+
+      function badValue(value) {
+        return function() {
+          cbm.create({name: 'Napo'}, value);
+        };
+      }
+      done();
+    });
+
+    it('creates a single Node', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      let created = cbm.create({name: 'Napo'}, 'node');
+      assert(created);
+      done();
+    });
+
+    it('creates a single Function', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      let created = cbm.create({name: 'testFunc'}, 'function');
+      assert(created);
+      done();
+    });
+
+    it('creates a single Relation', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      let created = cbm.create({name: 'testRel'}, 'relation');
+      assert(created);
+      done();
+    });
+
+
+    it('creates a single Node if no type specified', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      let created = cbm.create({name: 'Mary'});
+      assert(created);
+      done();
+    });
+
+    it('returns correctly if it can\'t create the node in the server (with specified type)', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      let created = cbm.create({desc: 'blabla'}, 'node');
+      assert(!created);
+      done();
+    });
+
+    it('returns correctly if it can\'t create the node in the server (without specified type)', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      let created = cbm.create({desc: 'blabla'});
+      assert(!created);
+      done();
+    });
+
+    it('returns correctly if it can\'t create the function in the server', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      let created = cbm.create({desc: 'blabla'}, 'function');
+      assert(!created);
+      done();
+    });
+
+    it('returns correctly if it can\'t create the relation in the server', function test(done) {
+      this.timeout(TIMEOUT_TIME);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      let created = cbm.create({desc: 'blabla'}, 'relation');
+      let path = cbm.host.concat('/new/fix');
+      request('post', path, {json: {command: 'fixtests'}});
+      assert(!created);
+      done();
     });
   });
 });

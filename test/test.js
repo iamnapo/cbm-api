@@ -32,9 +32,8 @@ describe('CallByMeaning', function tests() {
       done();
     });
 
-    it('can be invoked without new', function test(done) {
-      const cbm = CallByMeaning(HOST);
-      assert(cbm instanceof CallByMeaning);
+    it('can\'t be invoked without new', function test(done) {
+      expect((HOST) => CallByMeaning(HOST)).to.throw(TypeError);
       done();
     });
 

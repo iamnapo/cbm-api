@@ -1,16 +1,15 @@
 'use strict';
 
-function CallByMeaning(host) {
-  if (!(this instanceof CallByMeaning)) {
-    return new CallByMeaning(host);
+class CallByMeaning {
+  constructor(host) {
+    this.host = 'https://call-by-meaning.herokuapp.com';
+    if (host) this.host = String(host);
   }
-  this.host = 'https://call-by-meaning.herokuapp.com';
-  if (host) this.host = String(host);
+  _fullAddress(path) {
+    return this.host.concat(path);
+  }
 }
 
-CallByMeaning.prototype._fullAddress = function(path) {
-  return this.host.concat(path);
-};
 CallByMeaning.prototype.lookup = require('./src/lookup');
 CallByMeaning.prototype.getURI = require('./src/getURI');
 CallByMeaning.prototype.search = require('./src/search');

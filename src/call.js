@@ -2,7 +2,7 @@
 'use strict';
 
 const request = require('request');
-const pipe = require('../lib/jsonfn');
+const JSON = require('../lib/jsonfn');
 
 function call(...args) {
   let nargs = args.length;
@@ -28,13 +28,13 @@ function call(...args) {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
-  let path = this._fullAddress('/cbm/call/');
+  let path = this.fullAddress_('/cbm/call/');
   let caller = this;
   request.post({uri: path, headers: {returncode: returnCode}, form: params, json: true}, (err, response, body) => {
     if (returnCode) {
       caller.getCode(body.function, callback);
     } else {
-      callback(err, pipe.parse(body), response.statusCode);
+      callback(err, JSON.parse(body), response.statusCode);
     }
   });
 }

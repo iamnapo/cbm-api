@@ -19,9 +19,9 @@ function getCode(...args) {
 
   let path;
   if (codeFile.indexOf('/js') > -1 || codeFile.indexOf('/internal') > -1) {
-    path = this._fullAddress(codeFile.substring(1));
+    path = this.fullAddress_(codeFile.substring(1));
   } else {
-    path = codeFile[0] === '_' ? this._fullAddress('/js/internal' + codeFile) : this._fullAddress('/js/' + codeFile);
+    path = codeFile[0] === '_' ? this.fullAddress_('/js/internal' + codeFile) : this.fullAddress_('/js/' + codeFile);
   }
 
   let callback = args[1];

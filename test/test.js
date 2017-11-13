@@ -1,6 +1,5 @@
 /* eslint-env node, mocha */
 /* eslint no-invalid-this: "off" */
-/* eslint new-cap: "off" */
 
 'use strict';
 
@@ -33,6 +32,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('can\'t be invoked without new', function test(done) {
+      // eslint-disable-next-line new-cap
       expect((HOST) => CallByMeaning(HOST)).to.throw(TypeError);
       done();
     });

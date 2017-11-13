@@ -36,7 +36,7 @@ function lookup(...args) {
 
   if (type !== 'all') {
     let path = '/gbn/' + type + '/' + String(encodeURIComponent(uri));
-    request.get({uri: this._fullAddress(path), json: true}, (err, response, body) => {
+    request.get({uri: this.fullAddress_(path), json: true}, (err, response, body) => {
       if (response.statusCode === 200) {
         let result;
         switch (type) {
@@ -95,9 +95,9 @@ function lookup(...args) {
       }
     });
   } else {
-    let pathC = this._fullAddress('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
-    let pathF = this._fullAddress('/gbn/' + 'f' + '/' + String(encodeURIComponent(uri)));
-    let pathR = this._fullAddress('/gbn/' + 'r' + '/' + String(encodeURIComponent(uri)));
+    let pathC = this.fullAddress_('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
+    let pathF = this.fullAddress_('/gbn/' + 'f' + '/' + String(encodeURIComponent(uri)));
+    let pathR = this.fullAddress_('/gbn/' + 'r' + '/' + String(encodeURIComponent(uri)));
     request.get({uri: pathC, json: true}, (err, response, body) => {
       if (response.statusCode === 200) {
         let result = {

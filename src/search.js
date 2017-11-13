@@ -22,7 +22,7 @@ function search(...args) {
     throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
   }
 
-  let path = this._fullAddress('/gbm/search/');
+  let path = this.fullAddress_('/gbm/search/');
   request.post({uri: path, form: params, json: true}, (err, response, body) => {
     let result = body.map((obj) => {
       let temp = {

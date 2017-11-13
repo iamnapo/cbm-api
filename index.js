@@ -5,7 +5,7 @@ class CallByMeaning {
     this.host = 'https://call-by-meaning.herokuapp.com';
     if (host) this.host = String(host);
   }
-  _fullAddress(path) {
+  fullAddress_(path) {
     return this.host.concat(path);
   }
 }

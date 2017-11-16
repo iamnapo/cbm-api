@@ -2,14 +2,14 @@
 
 'use strict';
 
-const request = require('request');
+const request = require('sync-request');
 
 function getCode(...args) {
   let nargs = args.length;
   let codeFile;
 
-  if (nargs < 2) {
-    throw new Error('Insufficient input arguments. Must provide a path and a callback function.');
+  if (nargs < 1) {
+    throw new Error('Insufficient input arguments. Must provide a Javascript filename.');
   }
 
   codeFile = args[0];
@@ -24,14 +24,8 @@ function getCode(...args) {
     path = codeFile[0] === '_' ? this.fullAddress_('/js/internal' + codeFile) : this.fullAddress_('/js/' + codeFile);
   }
 
-  let callback = args[1];
-  if (!(callback instanceof Function)) {
-    throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
-  }
-
-  request.get(path, (err, response, body) => {
-    callback(err, String(body), response.statusCode);
-  });
+  let res = request('get', path);
+  return res.getBody('utf8');
 }
 
 module.exports = getCode;

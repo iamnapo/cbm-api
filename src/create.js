@@ -97,25 +97,29 @@ function create(...args) {
     }
   }
 
-  let created = false;
-  switch (type) {
-  case 'node':
-    created = createNode(params, this.host);
-    break;
-  case 'function':
-    if (params.codeFile) {
-      created = createAsyncFunction(params, this.host);
-    } else {
-      created = createFunction(params, this.host);
-    }
-    break;
-  case 'relation':
-    created = createRelation(params, this.host);
-    break;
-  }
   let path = this.host.concat('/new/fix');
-  request('post', path, {json: {command: 'fixit'}});
-  return created;
+  if (!(params.codeFile == null || params.codeFile.length === 0)) {
+    let created = createAsyncFunction(params, this.host).then(((created) => {
+      request('post', path, {json: {command: 'fixit'}});
+      return created;
+    }));
+    return created;
+  } else {
+    let created = false;
+    switch (type) {
+    case 'node':
+      created = createNode(params, this.host);
+      break;
+    case 'function':
+      created = createFunction(params, this.host);
+      break;
+    case 'relation':
+      created = createRelation(params, this.host);
+      break;
+    }
+    request('post', path, {json: {command: 'fixit'}});
+    return created;
+  }
 }
 
 module.exports = create;

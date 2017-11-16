@@ -10,7 +10,7 @@ const expect = chai.expect;
 const request = require('sync-request');
 const CallByMeaning = require('../index.js');
 
-const TIMEOUT_TIME = 3000;
+const TIMEOUT_TIME_1 = 2000;
 const HOST = process.env.HOST || 'https://call-by-meaning.herokuapp.com';
 
 function sleep(milliseconds) {
@@ -21,7 +21,8 @@ function sleep(milliseconds) {
     }
   }
 }
-const SLEEP_TIME = 1000;
+const SLEEP_TIME = 2000;
+const TIMEOUT_TIME_2 = TIMEOUT_TIME_1 + SLEEP_TIME;
 
 describe('CallByMeaning', function tests() {
   describe('Initial config', function test() {
@@ -56,7 +57,7 @@ describe('CallByMeaning', function tests() {
 
   describe('.lookup()', function tests() {
     it('throws an error if not supplied at least two arguments', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       const cbm = new CallByMeaning(HOST);
       expect(badValue()).to.throw(Error);
 
@@ -69,7 +70,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if URI argument is not a string primitive', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       const cbm = new CallByMeaning(HOST);
       let values = [
         function() {},
@@ -94,7 +95,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if type argument is not one of c, f, r', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       const cbm = new CallByMeaning();
       let values = [
         function() {},
@@ -119,7 +120,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         '5',
@@ -145,7 +146,7 @@ describe('CallByMeaning', function tests() {
 
 
     it('looks up a single concept', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.lookup('function', 'c', function(err, result, status) {
         assert(status === 200);
@@ -154,7 +155,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('looks up a single function', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.lookup('add', 'f', function(err, result, status) {
         assert(status === 200);
@@ -163,7 +164,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('looks up a single relation', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.lookup('unitConversion', 'r', function(err, result, status) {
         assert(status === 200);
@@ -172,7 +173,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('looks up a single concept without specified \'c\' type', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.lookup('function', function(err, result, status) {
         assert(status === 200);
@@ -181,7 +182,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('looks up a single function without specified \'f\' type', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.lookup('now', function(err, result, status) {
         assert(status === 200);
@@ -190,7 +191,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('looks up a single relation without specified \'r\' type', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.lookup('unitConversion', function(err, result, status) {
         assert(status === 200);
@@ -199,7 +200,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('returns correctly if it can\'t find the object in the server (with specified type)', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning();
       cbm.lookup('blabla', 'c', function(err, result, status) {
         assert(status === 418 && (typeof result) === 'object');
@@ -208,7 +209,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('returns correctly if it can\'t find the object in the server (without specified type)', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning();
       cbm.lookup('blabla', function(err, result, status) {
         assert(status === 418 && (typeof result) === 'object');
@@ -219,7 +220,7 @@ describe('CallByMeaning', function tests() {
 
   describe('.getURI()', function tests() {
     it('throws an error if supplied with more than one argument', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning();
       expect(badValue()).to.throw(Error);
 
@@ -232,7 +233,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if argument is not a string primitive', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         function() {},
@@ -257,7 +258,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('looks up the CallByMeaning URI for text', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let result = cbm.getURI('a big    ,  !!  dog!');
       assert(result === 'big_dog');
@@ -267,7 +268,7 @@ describe('CallByMeaning', function tests() {
 
   describe('.search()', function tests() {
     it('throws an error if supplied with less than required arguments', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       expect(badValue()).to.throw(Error);
 
@@ -280,7 +281,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if params argument is not an object', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         '5',
@@ -305,7 +306,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         '5',
@@ -333,7 +334,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('is possible to use search method to find CallByMeaning functions', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.search({
         outputNodes: 'time',
@@ -346,7 +347,7 @@ describe('CallByMeaning', function tests() {
 
   describe('.call()', function tests() {
     it('throws an error if not supplied with at least two arguments', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       expect(badValue()).to.throw(Error);
 
@@ -362,7 +363,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if params argument is not an object', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         function() {},
@@ -387,7 +388,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         '5',
@@ -458,7 +459,7 @@ describe('CallByMeaning', function tests() {
 
   describe('.getCode()', function tests() {
     it('throws an error if supplied with less than two arguments', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       expect(badValue()).to.throw(Error);
 
@@ -471,7 +472,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if argument is not a string primitive', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         function() {},
@@ -496,7 +497,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
         '5',
@@ -521,7 +522,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('is possible to retrieve code if input is a path', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.getCode('./js/now.js', function(err, result) {
         assert(result.includes('module.exports'));
@@ -530,7 +531,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('is possible to retrieve code if input is filename', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.getCode('now.js', function(err, result) {
         assert(result.includes('module.exports'));
@@ -541,7 +542,7 @@ describe('CallByMeaning', function tests() {
 
   describe('.create()', function tests() {
     it('throws an error if not supplied at least one argument', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       const cbm = new CallByMeaning(HOST);
       expect(badValue()).to.throw(Error);
 
@@ -554,7 +555,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if params argument is not an object', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       const cbm = new CallByMeaning(HOST);
       let values = [
         function() { },
@@ -578,7 +579,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('throws an error if type argument is not one of node, function, relation', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       const cbm = new CallByMeaning();
       let values = [
         function() { },
@@ -604,7 +605,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('creates a single Node', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let created = cbm.create({name: 'Napo'}, 'node');
       assert(created);
@@ -612,7 +613,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('creates a single Function', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_2);
       let cbm = new CallByMeaning(HOST);
       sleep(SLEEP_TIME);
       let created = cbm.create({name: 'testFunc'}, 'function');
@@ -621,7 +622,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('creates a single Relation', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_2);
       let cbm = new CallByMeaning(HOST);
       sleep(SLEEP_TIME);
       let created = cbm.create({name: 'testRel'}, 'relation');
@@ -631,7 +632,7 @@ describe('CallByMeaning', function tests() {
 
 
     it('creates a single Node if no type specified', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_2);
       let cbm = new CallByMeaning(HOST);
       sleep(SLEEP_TIME);
       let created = cbm.create({name: 'Mary'});
@@ -640,7 +641,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('returns correctly if it can\'t create the node in the server (with specified type)', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_2);
       let cbm = new CallByMeaning(HOST);
       sleep(SLEEP_TIME);
       let created = cbm.create({desc: 'blabla'}, 'node');
@@ -649,7 +650,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('returns correctly if it can\'t create the node in the server (without specified type)', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_2);
       let cbm = new CallByMeaning(HOST);
       sleep(SLEEP_TIME);
       let created = cbm.create({desc: 'blabla'});
@@ -658,7 +659,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('returns correctly if it can\'t create the function in the server', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_2);
       let cbm = new CallByMeaning(HOST);
       sleep(SLEEP_TIME);
       let created = cbm.create({desc: 'blabla'}, 'function');
@@ -667,7 +668,7 @@ describe('CallByMeaning', function tests() {
     });
 
     it('returns correctly if it can\'t create the relation in the server', function test(done) {
-      this.timeout(TIMEOUT_TIME);
+      this.timeout(TIMEOUT_TIME_2);
       let cbm = new CallByMeaning(HOST);
       sleep(SLEEP_TIME);
       let created = cbm.create({desc: 'blabla'}, 'relation');

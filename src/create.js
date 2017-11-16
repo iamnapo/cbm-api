@@ -3,6 +3,8 @@
 'use strict';
 
 const request = require('sync-request');
+const rp = require('request-promise');
+const fs = require('fs');
 
 function createNode(params, host) {
   let path = host.concat('/new/node');
@@ -28,9 +30,33 @@ function createFunction(params, host) {
       argsUnits: params.argsUnits,
       returnsNames: params.returnsNames,
       returnsUnits: params.returnsUnits,
-      codeFile: params.codeFile,
     },
   });
+  return res.statusCode === 200;
+}
+
+async function createAsyncFunction(params, host) {
+  let path = host.concat('/new/function');
+  if (params.name == null) return false;
+  let fullParams = {
+    name: '',
+    desc: '',
+    argsNames: [],
+    argsUnits: [],
+    returnsNames: [],
+    returnsUnits: [],
+    codeFile: '',
+  };
+  Object.assign(fullParams, params);
+  let res = await rp.post({uri: path, formData: {
+    name: fullParams.name,
+    desc: fullParams.desc,
+    argsNames: fullParams.argsNames,
+    argsUnits: fullParams.argsUnits,
+    returnsNames: fullParams.returnsNames,
+    returnsUnits: fullParams.returnsUnits,
+    codeFile: fs.createReadStream(fullParams.codeFile),
+  }, resolveWithFullResponse: true});
   return res.statusCode === 200;
 }
 
@@ -77,7 +103,11 @@ function create(...args) {
     created = createNode(params, this.host);
     break;
   case 'function':
-    created = createFunction(params, this.host);
+    if (params.codeFile) {
+      created = createAsyncFunction(params, this.host);
+    } else {
+      created = createFunction(params, this.host);
+    }
     break;
   case 'relation':
     created = createRelation(params, this.host);

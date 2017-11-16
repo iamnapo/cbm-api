@@ -32,7 +32,8 @@ function call(...args) {
   let caller = this;
   request.post({uri: path, headers: {returncode: returnCode}, form: params, json: true}, (err, response, body) => {
     if (returnCode) {
-      caller.getCode(body.function, callback);
+      let result = caller.getCode(body.function);
+      callback(err, result, response.statusCode);
     } else {
       callback(err, JSON.parse(body), response.statusCode);
     }

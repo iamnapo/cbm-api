@@ -458,14 +458,14 @@ describe('CallByMeaning', function tests() {
   });
 
   describe('.getCode()', function tests() {
-    it('throws an error if supplied with less than two arguments', function test(done) {
+    it('throws an error if supplied with more than one argument', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
-      let cbm = new CallByMeaning(HOST);
+      let cbm = new CallByMeaning();
       expect(badValue()).to.throw(Error);
 
       function badValue() {
         return function() {
-          cbm.getCode('./js/now.js');
+          cbm.getCode('now.js', 5);
         };
       }
       done();
@@ -490,32 +490,7 @@ describe('CallByMeaning', function tests() {
 
       function badValue(value) {
         return function() {
-          cbm.getCode(value, function() {});
-        };
-      }
-      done();
-    });
-
-    it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME_1);
-      let cbm = new CallByMeaning(HOST);
-      let values = [
-        '5',
-        5,
-        true,
-        undefined,
-        null,
-        NaN, [],
-        {},
-      ];
-
-      for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.getCode('./js/now.js', value);
+          cbm.getCode(value);
         };
       }
       done();
@@ -524,19 +499,17 @@ describe('CallByMeaning', function tests() {
     it('is possible to retrieve code if input is a path', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.getCode('./js/now.js', function(err, result) {
-        assert(result.includes('module.exports'));
-        done();
-      });
+      let result = cbm.getCode('./js/now.js');
+      assert(result.includes('module.exports'));
+      done();
     });
 
     it('is possible to retrieve code if input is filename', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.getCode('now.js', function(err, result) {
-        assert(result.includes('module.exports'));
-        done();
-      });
+      let result = cbm.getCode('now.js');
+      assert(result.includes('module.exports'));
+      done();
     });
   });
 

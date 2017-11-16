@@ -8,8 +8,8 @@ function getCode(...args) {
   let nargs = args.length;
   let codeFile;
 
-  if (nargs < 1) {
-    throw new Error('Insufficient input arguments. Must provide a Javascript filename.');
+  if (nargs !== 1) {
+    throw new Error('Insufficient input arguments. Must provide only a Javascript filename.');
   }
 
   codeFile = args[0];

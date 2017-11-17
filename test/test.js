@@ -56,17 +56,15 @@ describe('CallByMeaning', function tests() {
   });
 
   describe('.lookup()', function tests() {
-    it('throws an error if not supplied at least two arguments', function test(done) {
+    it('throws an error if not supplied at least one argument', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       const cbm = new CallByMeaning(HOST);
-      expect(badValue()).to.throw(Error);
-
-      function badValue() {
-        return function() {
-          cbm.lookup('time');
-        };
-      }
-      done();
+      cbm.lookup().then(() => {
+        done(new Error('Expected method to reject.'));
+      }).catch((err) => {
+        assert.isDefined(err);
+        done();
+      }).catch(done);
     });
 
     it('throws an error if URI argument is not a string primitive', function test(done) {
@@ -83,20 +81,16 @@ describe('CallByMeaning', function tests() {
       ];
 
       for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.lookup(value, function() {});
-        };
+        cbm.lookup(values[i]).catch((err) => {
+          assert.isDefined(err);
+        });
       }
       done();
     });
 
     it('throws an error if type argument is not one of c, f, r', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
-      const cbm = new CallByMeaning();
+      const cbm = new CallByMeaning(HOST);
       let values = [
         function() {},
         '5',
@@ -108,48 +102,18 @@ describe('CallByMeaning', function tests() {
       ];
 
       for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.lookup('time', value, function() {});
-        };
+        cbm.lookup(values[i]).catch((err) => {
+          assert.isDefined(err);
+        });
       }
       done();
     });
-
-    it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME_1);
-      let cbm = new CallByMeaning(HOST);
-      let values = [
-        '5',
-        5,
-        true,
-        undefined,
-        null,
-        NaN, [],
-        {},
-      ];
-
-      for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.lookup('time', value);
-        };
-      }
-      done();
-    });
-
 
     it('looks up a single concept', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.lookup('function', 'c', function(err, result, status) {
-        assert(status === 200);
+      cbm.lookup('function', 'c').then((response) => {
+        assert(response.statusCode === 200);
         done();
       });
     });
@@ -157,8 +121,8 @@ describe('CallByMeaning', function tests() {
     it('looks up a single function', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.lookup('add', 'f', function(err, result, status) {
-        assert(status === 200);
+      cbm.lookup('add', 'f').then((response) => {
+        assert(response.statusCode === 200);
         done();
       });
     });
@@ -166,8 +130,8 @@ describe('CallByMeaning', function tests() {
     it('looks up a single relation', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.lookup('unitConversion', 'r', function(err, result, status) {
-        assert(status === 200);
+      cbm.lookup('unitConversion', 'r').then((response) => {
+        assert(response.statusCode === 200);
         done();
       });
     });
@@ -175,8 +139,8 @@ describe('CallByMeaning', function tests() {
     it('looks up a single concept without specified \'c\' type', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.lookup('function', function(err, result, status) {
-        assert(status === 200);
+      cbm.lookup('function').then((response) => {
+        assert(response.statusCode === 200);
         done();
       });
     });
@@ -184,8 +148,8 @@ describe('CallByMeaning', function tests() {
     it('looks up a single function without specified \'f\' type', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.lookup('now', function(err, result, status) {
-        assert(status === 200);
+      cbm.lookup('now').then((response) => {
+        assert(response.statusCode === 200);
         done();
       });
     });
@@ -193,8 +157,8 @@ describe('CallByMeaning', function tests() {
     it('looks up a single relation without specified \'r\' type', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.lookup('unitConversion', function(err, result, status) {
-        assert(status === 200);
+      cbm.lookup('unitConversion').then((response) => {
+        assert(response.statusCode === 200);
         done();
       });
     });
@@ -202,8 +166,8 @@ describe('CallByMeaning', function tests() {
     it('returns correctly if it can\'t find the object in the server (with specified type)', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning();
-      cbm.lookup('blabla', 'c', function(err, result, status) {
-        assert(status === 418 && (typeof result) === 'object');
+      cbm.lookup('blabla', 'c').then((response) => {
+        assert(response.statusCode === 418 && (typeof response.body === 'object'));
         done();
       });
     });
@@ -211,8 +175,8 @@ describe('CallByMeaning', function tests() {
     it('returns correctly if it can\'t find the object in the server (without specified type)', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning();
-      cbm.lookup('blabla', function(err, result, status) {
-        assert(status === 418 && (typeof result) === 'object');
+      cbm.lookup('blabla').then((response) => {
+        assert(response.statusCode === 418 && (typeof response.body === 'object'));
         done();
       });
     });

@@ -231,17 +231,15 @@ describe('CallByMeaning', function tests() {
   });
 
   describe('.search()', function tests() {
-    it('throws an error if supplied with less than required arguments', function test(done) {
+    it('throws an error if not supplied at least one argument', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
-      let cbm = new CallByMeaning(HOST);
-      expect(badValue()).to.throw(Error);
-
-      function badValue() {
-        return function() {
-          cbm.search('big dog');
-        };
-      }
-      done();
+      const cbm = new CallByMeaning(HOST);
+      cbm.search().then(() => {
+        done(new Error('Expected method to reject.'));
+      }).catch((err) => {
+        assert.isDefined(err);
+        done();
+      }).catch(done);
     });
 
     it('throws an error if params argument is not an object', function test(done) {
@@ -258,41 +256,9 @@ describe('CallByMeaning', function tests() {
       ];
 
       for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.search(value, function() {});
-        };
-      }
-      done();
-    });
-
-    it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME_1);
-      let cbm = new CallByMeaning(HOST);
-      let values = [
-        '5',
-        5,
-        true,
-        undefined,
-        null,
-        NaN, [],
-        {},
-      ];
-
-      for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.search({
-            outputNodes: 'time',
-            outputUnits: 'milliseconds',
-          }, value);
-        };
+        cbm.search(values[i]).catch((err) => {
+          assert.isDefined(err);
+        });
       }
       done();
     });
@@ -300,10 +266,8 @@ describe('CallByMeaning', function tests() {
     it('is possible to use search method to find CallByMeaning functions', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.search({
-        outputNodes: 'time',
-      }, function(err, result, status) {
-        assert(result[0].description === 'Gets the timestamp of the number of milliseconds that have elapsed since the Unix epoch (1 January 1970 00:00:00 UTC).' && status === 200);
+      cbm.search({outputNodes: 'time'}).then((result) => {
+        assert(result.body[0].description === 'Gets the timestamp of the number of milliseconds that have elapsed since the Unix epoch (1 January 1970 00:00:00 UTC).' && result.statusCode === 200);
         done();
       });
     });

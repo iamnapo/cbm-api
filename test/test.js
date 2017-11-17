@@ -274,71 +274,34 @@ describe('CallByMeaning', function tests() {
   });
 
   describe('.call()', function tests() {
-    it('throws an error if not supplied with at least two arguments', function test(done) {
+    it('throws an error if not supplied at least one argument', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
-      let cbm = new CallByMeaning(HOST);
-      expect(badValue()).to.throw(Error);
-
-      function badValue() {
-        return function() {
-          cbm.call({
-            outputNodes: 'time',
-            outputUnits: 'milliseconds',
-          });
-        };
-      }
-      done();
+      const cbm = new CallByMeaning(HOST);
+      cbm.call().then(() => {
+        done(new Error('Expected method to reject.'));
+      }).catch((err) => {
+        assert.isDefined(err);
+        done();
+      }).catch(done);
     });
 
     it('throws an error if params argument is not an object', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       let values = [
-        function() {},
         '5',
         5,
         true,
         undefined,
         null,
         NaN,
+        function() { },
       ];
 
       for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.call(value, function() {});
-        };
-      }
-      done();
-    });
-
-    it('throws an error if callback argument is not a function', function test(done) {
-      this.timeout(TIMEOUT_TIME_1);
-      let cbm = new CallByMeaning(HOST);
-      let values = [
-        '5',
-        5,
-        true,
-        undefined,
-        null,
-        NaN, [],
-        {},
-      ];
-
-      for (let i = 0; i < values.length; i++) {
-        expect(badValue(values[i])).to.throw(TypeError);
-      }
-
-      function badValue(value) {
-        return function() {
-          cbm.call({
-            outputNodes: 'time',
-            outputUnits: 'milliseconds',
-          }, value);
-        };
+        cbm.call(values[i]).catch((err) => {
+          assert.isDefined(err);
+        });
       }
       done();
     });
@@ -349,8 +312,8 @@ describe('CallByMeaning', function tests() {
       cbm.call({
         outputNodes: 'time',
         outputUnits: 'milliseconds',
-      }, function(err, result, status) {
-        assert(status === 200);
+      }).then((result) => {
+        assert(result.statusCode === 200);
         done();
       });
     });
@@ -361,8 +324,8 @@ describe('CallByMeaning', function tests() {
       cbm.call({
         outputNodes: 'time',
         outputUnits: 'milliseconds',
-      }, true, function(err, result, status) {
-        assert(status === 200);
+      }, true).then((result) => {
+        assert(result.statusCode === 200);
         done();
       });
     });
@@ -373,12 +336,12 @@ describe('CallByMeaning', function tests() {
       cbm.call({
         outputNodes: 'time',
         outputUnits: 'hours',
-      }, function(err, result, status) {
+      }).then((result) => {
         cbm.call({
           outputNodes: 'time',
           outputUnits: 'milliseconds',
-        }, function(err, result2, status2) {
-          assert((status === status2 && status === 200) && result2 - 3600000 * result < 2000);
+        }).then((result2) => {
+          assert((result.statusCode === result2.statusCode && result.statusCode === 200) && result2.body - 3600000 * result.body < 2000);
           done();
         });
       });

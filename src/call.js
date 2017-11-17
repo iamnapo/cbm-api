@@ -1,43 +1,32 @@
 /* eslint no-invalid-this: "off" */
 'use strict';
 
-const request = require('request');
+const request = require('request-promise');
 const JSON = require('../lib/jsonfn');
 
-function call(...args) {
+async function call(...args) {
   let nargs = args.length;
   let params;
-  let callback;
   let returnCode = false;
 
-  if (nargs < 2) {
-    throw new Error('Insufficient input arguments. Must provide a params object and a callback function.');
+  if (nargs < 1) {
+    throw new Error('Insufficient input arguments. Must provide a params object.');
   }
   params = args[0];
   if (typeof params !== 'object' || params == null) {
     throw new TypeError('Invalid input argument. Argument must be an object.');
   }
 
-  if (nargs < 3) {
-    callback = args[1];
-  } else {
-    returnCode = args[1];
-    callback = args[2];
-  }
-  if (!(callback instanceof Function)) {
-    throw new TypeError('Invalid input argument. Last argument must be a callback function. Value: `' + callback + '`.');
-  }
+  if (nargs > 1) returnCode = args[1];
 
-  let path = this.fullAddress_('/cbm/call/');
-  let caller = this;
-  request.post({uri: path, headers: {returncode: returnCode}, form: params, json: true}, (err, response, body) => {
-    if (returnCode) {
-      let result = caller.getCode(body.function);
-      callback(err, result, response.statusCode);
-    } else {
-      callback(err, JSON.parse(body), response.statusCode);
-    }
-  });
+  let response = await request.post({uri: this.fullAddress_('/cbm/call/'), headers: {returncode: returnCode}, form: params, json: true, resolveWithFullResponse: true, simple: false});
+  if (returnCode) {
+    let result = this.getCode(response.body.function);
+    return {body: result, statusCode: response.statusCode};
+  } else {
+    let result = JSON.parse(response.body);
+    return {body: result, statusCode: response.statusCode};
+  }
 }
 
 module.exports = call;

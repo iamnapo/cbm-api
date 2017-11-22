@@ -12,19 +12,45 @@ async function call(...args) {
   if (nargs < 1) {
     throw new Error('Insufficient input arguments. Must provide a params object.');
   }
-  params = args[0];
-  if (typeof params !== 'object' || params == null) {
-    throw new TypeError('Invalid input argument. Argument must be an object.');
-  }
 
-  if (nargs > 1) returnCode = args[1];
+  if (nargs < 7) {
+    params = args[0];
+    if (params.outputNodes == null) {
+      args.reverse();
+      params = {};
+      if (typeof args[0] === 'boolean') {
+        returnCode = args[0];
+        params.outputUnits = args[1] || [];
+        params.outputNodes = args[2] || [];
+        if (returnCode && nargs < 6) {
+          params.inputUnits = args[3] || [];
+          params.inputNodes = args[4] || [];
+        } else {
+          params.inputVars = args[3] || [];
+          params.inputUnits = args[4] || [];
+          params.inputNodes = args[5] || [];
+        }
+      } else {
+        params.outputUnits = args[0] || [];
+        params.outputNodes = args[1] || [];
+        params.inputVars = args[2] || [];
+        params.inputUnits = args[3] || [];
+        params.inputNodes = args[4] || [];
+      }
+    }
+  } else {
+    throw new Error('Too many input arguments. Must provide one params object or arguments that correspond to params properties.');
+  }
 
   let response = await request.post({uri: this.fullAddress_('/cbm/call/'), headers: {returncode: returnCode}, form: params, json: true, resolveWithFullResponse: true, simple: false});
   if (returnCode) {
     let result = this.getCode(response.body.function);
     return {body: result, statusCode: response.statusCode};
   } else {
-    let result = JSON.parse(response.body);
+    let result = response.body;
+    try {
+      result = JSON.parse(response.body);
+    } catch (e) {/**/}
     return {body: result, statusCode: response.statusCode};
   }
 }

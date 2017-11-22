@@ -242,31 +242,28 @@ describe('CallByMeaning', function tests() {
       }).catch(done);
     });
 
-    it('throws an error if params argument is not an object', function test(done) {
+    it('throws an error if supplied with too many arguments', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      let values = [
-        '5',
-        5,
-        true,
-        undefined,
-        null,
-        NaN,
-        function() {},
-      ];
-
-      for (let i = 0; i < values.length; i++) {
-        cbm.search(values[i]).catch((err) => {
-          assert.isDefined(err);
-        });
-      }
-      done();
+      cbm.search({}, 'a', ['b']).catch((err) => {
+        assert.isDefined(err);
+        done();
+      });
     });
 
-    it('is possible to use search method to find CallByMeaning functions', function test(done) {
+    it('is possible to use search method to find CallByMeaning functions by params object', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
       cbm.search({outputNodes: 'time'}).then((result) => {
+        assert(result.body[0].description === 'Gets the timestamp of the number of milliseconds that have elapsed since the Unix epoch (1 January 1970 00:00:00 UTC).' && result.statusCode === 200);
+        done();
+      });
+    });
+
+    it('is possible to use search method to find CallByMeaning functions by providing all properties', function test(done) {
+      this.timeout(TIMEOUT_TIME_1);
+      let cbm = new CallByMeaning(HOST);
+      cbm.search('time').then((result) => {
         assert(result.body[0].description === 'Gets the timestamp of the number of milliseconds that have elapsed since the Unix epoch (1 January 1970 00:00:00 UTC).' && result.statusCode === 200);
         done();
       });
@@ -285,28 +282,16 @@ describe('CallByMeaning', function tests() {
       }).catch(done);
     });
 
-    it('throws an error if params argument is not an object', function test(done) {
+    it('throws an error if supplied with too many arguments', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      let values = [
-        '5',
-        5,
-        true,
-        undefined,
-        null,
-        NaN,
-        function() { },
-      ];
-
-      for (let i = 0; i < values.length; i++) {
-        cbm.call(values[i]).catch((err) => {
-          assert.isDefined(err);
-        });
-      }
-      done();
+      cbm.search({}, 'a', ['b']).catch((err) => {
+        assert.isDefined(err);
+        done();
+      });
     });
 
-    it('is possible to retrieve results', function test(done) {
+    it('is possible to retrieve results (params)', function test(done) {
       this.timeout(3000);
       let cbm = new CallByMeaning(HOST);
       cbm.call({
@@ -318,13 +303,31 @@ describe('CallByMeaning', function tests() {
       });
     });
 
-    it('is possible to retrieve code', function test(done) {
+    it('is possible to retrieve results (many args)', function test(done) {
+      this.timeout(3000);
+      let cbm = new CallByMeaning(HOST);
+      cbm.call('time', 'milliseconds').then((result) => {
+        assert(result.statusCode === 200);
+        done();
+      });
+    });
+
+    it('is possible to retrieve code (params)', function test(done) {
       this.timeout(3000);
       let cbm = new CallByMeaning(HOST);
       cbm.call({
         outputNodes: 'time',
         outputUnits: 'milliseconds',
       }, true).then((result) => {
+        assert(result.statusCode === 200);
+        done();
+      });
+    });
+
+    it('is possible to retrieve code (many args)', function test(done) {
+      this.timeout(3000);
+      let cbm = new CallByMeaning(HOST);
+      cbm.call('time', 'milliseconds', true).then((result) => {
         assert(result.statusCode === 200);
         done();
       });

@@ -11,9 +11,20 @@ async function search(...args) {
   if (nargs < 1) {
     throw new Error('Insufficient input arguments. Must provide a params object.');
   }
-  params = args[0];
-  if (typeof params !== 'object' || params == null) {
-    throw new TypeError('Invalid input argument. Argument must be an object.');
+
+  if (nargs < 3) {
+    params = args[0];
+    if (params.outputNodes == null) {
+      params = {};
+      args.reverse();
+      params =
+        {
+          inputNodes: args[1] || [],
+          outputNodes: args[0] || [],
+        };
+    }
+  } else {
+    throw new Error('Too many input arguments. Must provide one params object or two arrays/strings(input, output) or one array/string(output).');
   }
 
   let response = await request.post({uri: this.fullAddress_('/gbm/search/'), form: params, json: true, resolveWithFullResponse: true, simple: false});

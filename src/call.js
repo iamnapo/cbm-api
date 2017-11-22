@@ -37,11 +37,12 @@ async function call(...args) {
         params.inputUnits = args[3] || [];
         params.inputNodes = args[4] || [];
       }
+    } else {
+      returnCode = args[1];
     }
   } else {
     throw new Error('Too many input arguments. Must provide one params object or arguments that correspond to params properties.');
   }
-
   let response = await request.post({uri: this.fullAddress_('/cbm/call/'), headers: {returncode: returnCode}, form: params, json: true, resolveWithFullResponse: true, simple: false});
   if (returnCode) {
     let result = this.getCode(response.body.function);

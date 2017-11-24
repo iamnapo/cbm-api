@@ -35,7 +35,7 @@ function createFunction(params, host) {
   return res.statusCode === 200;
 }
 
-async function createAsyncFunction(params, host) {
+async function createAsyncFunction(params, callPath, host) {
   let path = host.concat('/new/function');
   if (params.name == null) return false;
   let fullParams = {
@@ -48,16 +48,21 @@ async function createAsyncFunction(params, host) {
     codeFile: '',
   };
   Object.assign(fullParams, params);
-  let res = await rp.post({uri: path, formData: {
-    name: fullParams.name,
-    desc: fullParams.desc,
-    argsNames: fullParams.argsNames,
-    argsUnits: fullParams.argsUnits,
-    returnsNames: fullParams.returnsNames,
-    returnsUnits: fullParams.returnsUnits,
-    codeFile: fs.createReadStream(fullParams.codeFile),
-  }, resolveWithFullResponse: true});
-  return res.statusCode === 200;
+  try {
+    let res = await rp.post({uri: path, formData: {
+        name: fullParams.name,
+        desc: fullParams.desc,
+        argsNames: fullParams.argsNames,
+        argsUnits: fullParams.argsUnits,
+        returnsNames: fullParams.returnsNames,
+        returnsUnits: fullParams.returnsUnits,
+        codeFile: fs.createReadStream(fullParams.codeFile),
+      }, resolveWithFullResponse: true});
+    request('post', callPath, {json: {command: 'fixit'}});
+    return res.statusCode === 200;
+  } catch (error) {
+    return false;
+  }
 }
 
 function createRelation(params, host) {
@@ -99,11 +104,7 @@ function create(...args) {
 
   let path = this.host.concat('/new/fix');
   if (!(params.codeFile == null || params.codeFile.length === 0)) {
-    let created = createAsyncFunction(params, this.host).then(((created) => {
-      request('post', path, {json: {command: 'fixit'}});
-      return created;
-    }));
-    return created;
+    return createAsyncFunction(params, path, this.host);
   } else {
     let created = false;
     switch (type) {

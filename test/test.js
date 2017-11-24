@@ -102,7 +102,7 @@ describe('CallByMeaning', function tests() {
       ];
 
       for (let i = 0; i < values.length; i++) {
-        cbm.lookup(values[i]).catch((err) => {
+        cbm.lookup('time', values[i]).catch((err) => {
           assert.isDefined(err);
         });
       }
@@ -285,7 +285,7 @@ describe('CallByMeaning', function tests() {
     it('throws an error if supplied with too many arguments', function test(done) {
       this.timeout(TIMEOUT_TIME_1);
       let cbm = new CallByMeaning(HOST);
-      cbm.search({}, 'a', ['b']).catch((err) => {
+      cbm.call(1, 2, 3, 4, 5, 6, 7, 8).catch((err) => {
         assert.isDefined(err);
         done();
       });
@@ -312,6 +312,15 @@ describe('CallByMeaning', function tests() {
       });
     });
 
+    it('is possible to retrieve results (many args) when returnCode === false', function test(done) {
+      this.timeout(3000);
+      let cbm = new CallByMeaning(HOST);
+      cbm.call('date', null, [new Date()], 'time', 'milliseconds', false).then((result) => {
+        assert(result.statusCode === 200);
+        done();
+      });
+    });
+
     it('is possible to retrieve code (params)', function test(done) {
       this.timeout(3000);
       let cbm = new CallByMeaning(HOST);
@@ -327,7 +336,7 @@ describe('CallByMeaning', function tests() {
     it('is possible to retrieve code (many args)', function test(done) {
       this.timeout(3000);
       let cbm = new CallByMeaning(HOST);
-      cbm.call('time', 'milliseconds', true).then((result) => {
+      cbm.call('date', null, 'time', 'milliseconds', true).then((result) => {
         assert(result.statusCode === 200);
         done();
       });
@@ -340,10 +349,7 @@ describe('CallByMeaning', function tests() {
         outputNodes: 'time',
         outputUnits: 'hours',
       }).then((result) => {
-        cbm.call({
-          outputNodes: 'time',
-          outputUnits: 'milliseconds',
-        }).then((result2) => {
+        cbm.call('time', 'milliseconds').then((result2) => {
           assert((result.statusCode === result2.statusCode && result.statusCode === 200) && result2.body - 3600000 * result.body < 2000);
           done();
         });
@@ -486,6 +492,36 @@ describe('CallByMeaning', function tests() {
       let created = cbm.create({name: 'testFunc'}, 'function');
       assert(created);
       done();
+    });
+
+    it('creates a single async Function with existing file', function test(done) {
+      this.timeout(TIMEOUT_TIME_2);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      cbm.create({name: 'jsonfn', codeFile: __dirname.concat('/../lib/jsonfn.js')}, 'function')
+      .then((result) => {
+        assert(result);
+        done();
+      })
+      .catch((err) => {
+        assert.isDefined(err);
+        done();
+      });
+    });
+
+    it('creates a single async Function with non-existing file', function test(done) {
+      this.timeout(TIMEOUT_TIME_2);
+      let cbm = new CallByMeaning(HOST);
+      sleep(SLEEP_TIME);
+      cbm.create({name: 'jsonfn', codeFile: 'default.js'}, 'function')
+        .then((result) => {
+          assert(result);
+          done();
+        })
+        .catch((err) => {
+          assert.isDefined(err);
+          done();
+        });
     });
 
     it('creates a single Relation', function test(done) {

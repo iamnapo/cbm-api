@@ -118,7 +118,7 @@ const getTime = eval(code);
 getTime();
 ```
 
-## `.create(params[, type])
+## `.create(params[, type])`
 
 This method creates a document in the server if it doesn't exist or modifies it, if it does. It accepts a [params](https://github.com/iamnapo/CallByMeaning/blob/master/docs/MODELS.md) object with the document parameters as its first argument and a string containing the type of the document. It can be one of `node`, `function`, `relation`. If it isn't provided, it defaults to `node`. For ease of use, this method is generally blocking. The only time that it's asynchronous is when the user wants to create a function and provide a sourceCode file for it, because the file needs to be copied to the server. Returns a boolean, depending of its success.
 

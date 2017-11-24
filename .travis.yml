@@ -5,10 +5,10 @@ cache:
   - node_modules
 language: node_js
 node_js:
-- 8
+- node
 notifications:
   email: false
 after_success:
-- istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec
+- nyc report --reporter=text-lcov > coverage.lcov
 - ./node_modules/.bin/codecov
 sudo: false

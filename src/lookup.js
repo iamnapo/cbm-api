@@ -81,12 +81,10 @@ async function lookup(...args) {
         };
         break;
       }
-      response.body = result;
-      return response;
+      return {body: result, statusCode: response.statusCode};
     } else {
       let result = Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
-      response.body = result;
-      return response;
+      return {body: result, statusCode: response.statusCode};
     }
   } else {
     let pathC = this.fullAddress_('/gbn/' + 'c' + '/' + String(encodeURIComponent(uri)));
@@ -113,8 +111,7 @@ async function lookup(...args) {
           return temp;
         }),
       };
-      response.body = result;
-      return response;
+      return {body: result, statusCode: response.statusCode};
     } else {
       let response = await request.get({uri: pathF, json: true, resolveWithFullResponse: true, simple: false});
       if (response.statusCode === 200) {
@@ -128,8 +125,7 @@ async function lookup(...args) {
           returnsUnits: response.body.returnsUnits,
           sourceCode: response.body.codeFile,
         };
-        response.body = result;
-        return response;
+        return {body: result, statusCode: response.statusCode};
       } else {
         let response = await request.get({uri: pathR, json: true, resolveWithFullResponse: true, simple: false});
         if (response.statusCode === 200) {
@@ -145,12 +141,10 @@ async function lookup(...args) {
               return temp;
             }),
           };
-          response.body = result;
-          return response;
+          return {body: result, statusCode: response.statusCode};
         } else {
           let result = Object('Couldn\'t find that in DB.'); // keep convention that always an object is returned.
-          response.body = result;
-          return response;
+          return {body: result, statusCode: response.statusCode};
         }
       }
     }

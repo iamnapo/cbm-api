@@ -13,7 +13,7 @@ npm install iamnapo/cbm-api
 To require the module in a project, we can use the expression:
 
 ```javascript
-var CallByMeaning = require('cbm-api');
+const CallByMeaning = require('cbm-api');
 ```
 
 ## Getting Started
@@ -21,7 +21,7 @@ var CallByMeaning = require('cbm-api');
 The module exports a single constructor which can be used to open an API connection. Simply call it and store the expression result in a variable:
 
 ``` javascript
-var cbm = CallByMeaning();
+const cbm = new CallByMeaning();
 ```
 
 In case that you are running your own copy of the CallByMeaning server, the constructor takes the hostname of the server as an optional argument. The default option evaluates to "[https://call-by-meaning.herokuapp.com](https://call-by-meaning.herokuapp.com/)".
@@ -33,25 +33,25 @@ CallByMeaning(host);
 Example:
 
 ```javascript
-var cbm = CallByMeaning('192.168.1.1');
+const cbm = new CallByMeaning('http://localhost:3000');
 ```
 
-We can then use the following five methods to query the CallByMeaning API:
+We can then use the following six methods to query the CallByMeaning API:
 
 ## Methods
 
-### `.lookup(uri[, type], callback)`
+### `.lookup(uri[, type])`
 
 This method expects a valid CallByMeaning URI as its first argument.
-`type` is an (optional) string that specifies the type of the GET request. It can have the keys `c`, `f` or `r`. The `callback` function has three parameters: The `err` parameter will return error objects in case that something goes
-wrong during the function invocation. If the query is successful, `err` is `undefined` and the `response` parameter holds server's response. The `body` parameter holds the result set from the query.
+`type` is an (optional) string that specifies the type of the GET request. It can have the keys `c`, `f` or `r`. This method is asynchronous and returns a promise that, when fulfilled, returns an object with two properties.`statusCode` which contains the status code of the request and `body` that holds the result set from the query.
 
 Example code:
 
 ```javascript
-cbm.lookup('time', 'c', function (err, response, body) {
+cbm.lookup('time', 'c').then((result) => {
+  if (result.statusCode === 200) console.log('Success!');
   // insert code here
-});
+}).catch((error) => console.error(error));
 ```
 
 ### `.getURI(text)`
@@ -64,50 +64,100 @@ Example code:
 cbm.getURI('a (big) dog!'); //-> big_dog
 ```
 
-### `.search(params, callback)`
+### `.search(...args)`
 
-The search method takes a parameter object and hands the retrieved results to the callback function. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/blob/master/docs/GETBYMEANING.md).
+This method finds all the functions that correspond to given nodes and returns an array containing them. It can be called with two different ways. Either by providing only an object containing the search parameters or by providing the parameters themselves as arguments. This method is asynchronous and returns a promise that, when fulfilled, returns an object with two properties.`statusCode` which contains the status code of the request and `body` that holds the result set from the query. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/blob/master/docs/GETBYMEANING.md).
 
 Example code:
 
 ```javascript
-cbm.search({
-  'inputNodes': 'date',
-  'outputNodes': 'time'
-}, function (err, response, body) {
+cbm.search({'inputNodes': 'date', 'outputNodes': 'time'}).then((result) => {
+  if (result.statusCode === 200) console.log('Success!');
   // insert code here
-});
+}).catch((error) => console.error(error));
+
+cbm.search('date', 'time'}).then((result) => {
+  if (result.statusCode === 200) console.log('Success!');
+  // insert code here
+}).catch((error) => console.error(error));
 ```
 
-### `.call(params[, returncode], callback)`
+### `.call(...args)`
 
-The call method takes a parameter object and after finding an appropriate function - a function with the same concepts as inputs and outputs, but (maybe) in different units, that is - executes it and passes the result to the callback function. If the (optional) argument `returncode` is set to true, it instead passes the .js file's location and the description of the function. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/blob/master/docs/CALLBYMEANING.md).
+This method takes the search parameters and after finding an appropriate function - a function with the same concepts as inputs and outputs, but (maybe) in different units, that is - executes it and returns the result. If the (optional) argument `returnCode` is set to true, it instead returns the .js file's name and the description of the function. It can be called with two different ways. Either by providing only an object containing the search parameters (and maybe the optional returnCode as a second argument) or by providing the parameters themselves as arguments. This method is asynchronous and returns a promise that, when fulfilled, returns an object with two properties.`statusCode` which contains the status code of the request and `body` that holds the result set from the query. For a full overview of search parameters, check the [documentation](https://github.com/iamnapo/CallByMeaning/blob/master/docs/CALLBYMEANING.md).
 
 Example code:
 
 ```javascript
-var bday = new Date(1994, 3, 24);
+const bday = new Date(1994, 2, 24);
+
 cbm.call({
   'inputNodes': 'date',
-  'inputUnits': 'date',
+  // 'date' doesn't have a unit, so we can omit it, or pass {'inputUnits': null} or {'inputUnits': []} or {'inputUnits: '-'} or {'inputUnits': 'date'}
   'inputVars': bday,
   'outputNodes': 'time',
   'outputUnits': 'seconds'
-}, function (err, response, body) {
+}.then((result) => {
+  if (result.statusCode === 200) console.log('Success!');
   // insert code here
-});
+}).catch((error) => console.error(error));
+
+cbm.call('date', null, 'time', 'seconds').then(...);
+cbm.call('date', null, 'time', 'seconds', true).then(...); // If we want the source code
 ```
 
-### `.getCode(path, callback)`
+### `.getCode(fileName)`
 
-This method acts as a small helper to the usage of `.search` and `.call` methods. It takes the `path` of a .js file in the server and passes its code in plain text into the callback.
+This method acts as a small helper to the usage of `.search` and `.call` methods. It takes the `name` of a .js file in the server and returns its code in plain text.
 
 Example code:
 
 ```javascript
-cbm.getCode('/js/getTime.js', function (err, result) {
-  // insert code here
-});
+let code = cbm.getCode('getTime.js');
+const getTime = eval(code);
+getTime();
+```
+
+## `.create(params[, type])
+
+This method creates a document in the server if it doesn't exist or modifies it, if it does. It accepts a [params](https://github.com/iamnapo/CallByMeaning/blob/master/docs/MODELS.md) object with the document parameters as its first argument and a string containing the type of the document. It can be one of `node`, `function`, `relation`. If it isn't provided, it defaults to `node`. For ease of use, this method is generally blocking. The only time that it's asynchronous is when the user wants to create a function and provide a sourceCode file for it, because the file needs to be copied to the server. Returns a boolean, depending of its success.
+
+Example code:
+
+```javascript
+let params = {
+  name: 'aNode',
+  desc: 'aDescription',
+};
+cbm.create(params);
+```
+
+```javascript
+let params = {
+  name: 'aFunction',
+  desc: 'aDescription',
+  argsNames: 'someArg',
+  argsUnits: 'someUnit',
+  returnsNames: 'someReturn',
+  returnsUnits: 'someUnit',
+};
+cbm.create(params, 'function');
+
+params.codeFile = __dirname.concat('/someFile.js');
+(async () => {
+  let res = await cbm.create(params, 'function');
+  return res;
+})().then((res) => console.log(res));
+```
+
+```javascript
+let params = {
+  name: 'unitConversion',
+  start: 'meters',
+  end: 'feet',
+  mathRelation: '0.3 * start'
+}
+cbm.create(params, 'relation')
 ```
 
 ## Unit Tests

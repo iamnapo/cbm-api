@@ -1,11 +1,7 @@
-/* eslint no-invalid-this: "off" */
-
-'use strict';
-
 const request = require('request-promise');
 
 async function search(...args) {
-  let nargs = args.length;
+  const nargs = args.length;
   let params;
 
   if (nargs < 1) {
@@ -27,9 +23,15 @@ async function search(...args) {
     throw new Error('Too many input arguments. Must provide one params object or two arrays/strings(input, output) or one array/string(output).');
   }
 
-  let response = await request.post({uri: this.fullAddress_('/gbm/search/'), form: params, json: true, resolveWithFullResponse: true, simple: false});
-  let result = response.body.map((obj) => {
-    let temp = {
+  const response = await request.post({
+    uri: this.fullAddress_('/gbm/search/'),
+    form: params,
+    json: true,
+    resolveWithFullResponse: true,
+    simple: false,
+  });
+  const result = response.body.map((obj) => {
+    const temp = {
       function: obj.function.split('/').pop(),
       description: obj.desc,
     };

@@ -1,15 +1,11 @@
-/* eslint no-invalid-this: "off" */
-
-'use strict';
-
 const request = require('sync-request');
 const rp = require('request-promise');
 const fs = require('fs');
 
 function createNode(params, host) {
-  let path = host.concat('/new/node');
+  const path = host.concat('/new/node');
   if (params.name == null) return false;
-  let res = request('post', path, {
+  const res = request('post', path, {
     json: {
       name: params.name,
       desc: params.desc,
@@ -20,9 +16,9 @@ function createNode(params, host) {
 }
 
 function createFunction(params, host) {
-  let path = host.concat('/new/function');
+  const path = host.concat('/new/function');
   if (params.name == null) return false;
-  let res = request('post', path, {
+  const res = request('post', path, {
     json: {
       name: params.name,
       desc: params.desc,
@@ -36,9 +32,9 @@ function createFunction(params, host) {
 }
 
 async function createAsyncFunction(params, callPath, host) {
-  let path = host.concat('/new/function');
+  const path = host.concat('/new/function');
   if (params.name == null) return false;
-  let fullParams = {
+  const fullParams = {
     name: '',
     desc: '',
     argsNames: [],
@@ -49,7 +45,9 @@ async function createAsyncFunction(params, callPath, host) {
   };
   Object.assign(fullParams, params);
   try {
-    let res = await rp.post({uri: path, formData: {
+    const res = await rp.post({
+      uri: path,
+      formData: {
         name: fullParams.name,
         desc: fullParams.desc,
         argsNames: fullParams.argsNames,
@@ -57,8 +55,10 @@ async function createAsyncFunction(params, callPath, host) {
         returnsNames: fullParams.returnsNames,
         returnsUnits: fullParams.returnsUnits,
         codeFile: fs.createReadStream(fullParams.codeFile),
-      }, resolveWithFullResponse: true});
-    request('post', callPath, {json: {command: 'fixit'}});
+      },
+      resolveWithFullResponse: true,
+    });
+    request('post', callPath, { json: { command: 'fixit' } });
     return res.statusCode === 200;
   } catch (error) {
     return false;
@@ -66,9 +66,9 @@ async function createAsyncFunction(params, callPath, host) {
 }
 
 function createRelation(params, host) {
-  let path = host.concat('/new/relation');
+  const path = host.concat('/new/relation');
   if (params.name == null) return false;
-  let res = request('post', path, {
+  const res = request('post', path, {
     json: {
       name: params.name,
       desc: params.desc,
@@ -81,14 +81,13 @@ function createRelation(params, host) {
 }
 
 function create(...args) {
-  let nargs = args.length;
-  let params;
+  const nargs = args.length;
   let type;
 
   if (nargs < 1) {
     throw new Error('Insufficient input arguments. Must provide a params object.');
   }
-  params = args[0];
+  const params = args[0];
   if (typeof params !== 'object' || params == null) {
     throw new TypeError('Invalid input argument. Argument must be an object.');
   }
@@ -98,16 +97,16 @@ function create(...args) {
   } else {
     type = args[1];
     if ((!(typeof type === 'string') || (['node', 'function', 'relation'].indexOf(type) === -1))) {
-      throw new TypeError('Invalid input argument. type argument must be one of \'node\', \'function\', \'relation\'. Value: `' + type + '`.');
+      throw new TypeError(`Invalid input argument. type argument must be one of 'node', 'function', 'relation'. Value: \`${type}\`.`);
     }
   }
 
-  let path = this.host.concat('/new/fix');
+  const path = this.host.concat('/new/fix');
   if (!(params.codeFile == null || params.codeFile.length === 0)) {
     return createAsyncFunction(params, path, this.host);
-  } else {
-    let created = false;
-    switch (type) {
+  }
+  let created = false;
+  switch (type) {
     case 'node':
       created = createNode(params, this.host);
       break;
@@ -117,10 +116,11 @@ function create(...args) {
     case 'relation':
       created = createRelation(params, this.host);
       break;
-    }
-    request('post', path, {json: {command: 'fixit'}});
-    return created;
+    default:
+      break;
   }
+  request('post', path, { json: { command: 'fixit' } });
+  return created;
 }
 
 module.exports = create;

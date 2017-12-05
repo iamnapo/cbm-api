@@ -1,11 +1,8 @@
-/* eslint no-invalid-this: "off" */
-'use strict';
-
 const request = require('request-promise');
 const JSON = require('../lib/jsonfn');
 
 async function call(...args) {
-  let nargs = args.length;
+  const nargs = args.length;
   let params;
   let returnCode = false;
 
@@ -43,17 +40,23 @@ async function call(...args) {
   } else {
     throw new Error('Too many input arguments. Must provide one params object or arguments that correspond to params properties.');
   }
-  let response = await request.post({uri: this.fullAddress_('/cbm/call/'), headers: {returncode: returnCode}, form: params, json: true, resolveWithFullResponse: true, simple: false});
+  const response = await request.post({
+    uri: this.fullAddress_('/cbm/call/'),
+    headers: { returnCode },
+    form: params,
+    json: true,
+    resolveWithFullResponse: true,
+    simple: false,
+  });
   if (returnCode) {
-    let result = this.getCode(response.body.function);
-    return {body: result, statusCode: response.statusCode};
-  } else {
-    let result = response.body;
-    try {
-      result = JSON.parse(response.body);
-    } catch (e) {/**/}
-    return {body: result, statusCode: response.statusCode};
+    const result = this.getCode(response.body.function);
+    return { body: result, statusCode: response.statusCode };
   }
+  let result = response.body;
+  try {
+    result = JSON.parse(response.body);
+  } catch (e) { /**/ }
+  return { body: result, statusCode: response.statusCode };
 }
 
 module.exports = call;

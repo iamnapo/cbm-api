@@ -1,5 +1,3 @@
-'use strict';
-
 class CallByMeaning {
   constructor(host) {
     this.host = 'https://call-by-meaning.herokuapp.com';

@@ -117,7 +117,6 @@ function create(...args) {
       created = createRelation(params, this.host);
       break;
     default:
-      break;
   }
   request('post', path, { json: { command: 'fixit' } });
   return created;

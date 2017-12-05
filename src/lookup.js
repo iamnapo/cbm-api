@@ -81,7 +81,6 @@ async function lookup(...args) {
           };
           break;
         default:
-          break;
       }
       return { body: result, statusCode: response.statusCode };
     }

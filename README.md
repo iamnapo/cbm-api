@@ -1,4 +1,4 @@
-# cbm-api    [![Build Status](https://travis-ci.com/iamnapo/cbm-api.svg?token=dPuvXqxKaaMT7sVBkN1H&branch=master)](https://travis-ci.com/iamnapo/cbm-api) [![codecov](https://codecov.io/gh/iamnapo/cbm-api/branch/master/graph/badge.svg?token=CSMrm2a8S1)](https://codecov.io/gh/iamnapo/cbm-api)
+# cbm-api    [![Build Status](https://travis-ci.org/iamnapo/cbm-api.svg?branch=master)](https://travis-ci.org/iamnapo/cbm-api) [![codecov](https://codecov.io/gh/iamnapo/cbm-api/branch/master/graph/badge.svg)](https://codecov.io/gh/iamnapo/cbm-api)
 
 Node.js interface to the CallByMeaning network server. For further information, consult the website of the server-side project: [CallByMeaning](https://github.com/iamnapo/CallByMeaning).
 
@@ -168,4 +168,4 @@ Run tests via the command `npm test`
 
 ## License
 
-[AGPL-3.0 license](https://opensource.org/licenses/AGPL-3.0).
+[AGPL-3.0 license](./LICENSE).

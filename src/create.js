@@ -106,18 +106,9 @@ function create(...args) {
     return createAsyncFunction(params, path, this.host);
   }
   let created = false;
-  switch (type) {
-    case 'node':
-      created = createNode(params, this.host);
-      break;
-    case 'function':
-      created = createFunction(params, this.host);
-      break;
-    case 'relation':
-      created = createRelation(params, this.host);
-      break;
-    default:
-  }
+  if (type === 'node') created = createNode(params, this.host);
+  if (type === 'function') created = createFunction(params, this.host);
+  if (type === 'relation') created = createRelation(params, this.host);
   request('post', path, { json: { command: 'fixit' } });
   return created;
 }

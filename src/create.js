@@ -80,7 +80,7 @@ function createRelation(params, host) {
   return res.statusCode === 200;
 }
 
-function create(...args) {
+async function create(...args) {
   const nargs = args.length;
   let type;
 
@@ -109,7 +109,7 @@ function create(...args) {
   if (type === 'node') created = createNode(params, this.host);
   if (type === 'function') created = createFunction(params, this.host);
   if (type === 'relation') created = createRelation(params, this.host);
-  request('post', path, { json: { command: 'fixit' } });
+  await request.post(path, { json: { command: 'fixit' } });
   return created;
 }
 

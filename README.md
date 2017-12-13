@@ -1,14 +1,8 @@
-# cbm-api    [![Build Status](https://travis-ci.org/iamnapo/cbm-api.svg?branch=master)](https://travis-ci.org/iamnapo/cbm-api) [![codecov](https://codecov.io/gh/iamnapo/cbm-api/branch/master/graph/badge.svg)](https://codecov.io/gh/iamnapo/cbm-api)
+# cbm-api    [![Build Status](https://travis-ci.org/iamnapo/cbm-api.svg?branch=master)](https://travis-ci.org/iamnapo/cbm-api) [![codecov](https://codecov.io/gh/iamnapo/cbm-api/branch/master/graph/badge.svg)](https://codecov.io/gh/iamnapo/cbm-api) [![npm version](https://badge.fury.io/js/cbm-api.svg)](https://badge.fury.io/js/cbm-api)
 
 Node.js interface to the CallByMeaning network server. For further information, consult the website of the server-side project: [CallByMeaning](https://github.com/iamnapo/CallByMeaning).
 
 ## Introduction
-
-The cbm-api package can be easily installed via npm:
-
-``` bash
-npm install iamnapo/cbm-api
-```
 
 To require the module in a project, we can use the expression:
 

@@ -109,7 +109,7 @@ async function create(...args) {
   if (type === 'node') created = createNode(params, this.host);
   if (type === 'function') created = createFunction(params, this.host);
   if (type === 'relation') created = createRelation(params, this.host);
-  await request.post(path, { json: { command: 'fixit' } });
+  await rp.post(path, { json: { command: 'fixit' } });
   return created;
 }
 

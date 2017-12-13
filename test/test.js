@@ -9,7 +9,7 @@ const CallByMeaning = require('../index.js');
 const assert = chai.assert;
 const expect = chai.expect;
 
-const TIMEOUT_TIME = 2000;
+const TIMEOUT_TIME = 10000;
 const HOST = process.env.HOST || 'https://call-by-meaning.herokuapp.com';
 
 describe('CallByMeaning', function tests() {

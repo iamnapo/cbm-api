@@ -1,6 +1,6 @@
 {
   "name": "cbm-api",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An easy way to connect with CallByMeaning server.",
   "main": "index.js",
   "scripts": {

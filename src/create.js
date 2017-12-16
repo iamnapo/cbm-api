@@ -1,15 +1,16 @@
 const request = require('sync-request');
 const rp = require('request-promise');
 const fs = require('fs');
+const getURI = require('./getURI');
 
 function createNode(params, host) {
   const path = host.concat('/new/node');
   if (params.name == null) return false;
   const res = request('post', path, {
     json: {
-      name: params.name,
+      name: getURI(params.name),
       desc: params.desc,
-      units: params.units,
+      units: params.units ? [].concat(params.units).map(el => getURI(el)) : params.units,
     },
   });
   return res.statusCode === 200;
@@ -22,10 +23,10 @@ function createFunction(params, host) {
     json: {
       name: params.name,
       desc: params.desc,
-      argsNames: params.argsNames,
-      argsUnits: params.argsUnits,
-      returnsNames: params.returnsNames,
-      returnsUnits: params.returnsUnits,
+      argsNames: params.argsNames ? [].concat(params.argsNames).map(el => getURI(el)) : params.argsNames,
+      argsUnits: params.argsUnits ? [].concat(params.argsUnits).map(el => getURI(el)) : params.argsUnits,
+      returnsNames: params.returnsNames ? [].concat(params.returnsNames).map(el => getURI(el)) : params.returnsNames,
+      returnsUnits: params.returnsUnits ? [].concat(params.returnsUnits).map(el => getURI(el)) : params.returnsUnits,
     },
   });
   return res.statusCode === 200;
@@ -50,10 +51,10 @@ async function createAsyncFunction(params, callPath, host) {
       formData: {
         name: fullParams.name,
         desc: fullParams.desc,
-        argsNames: fullParams.argsNames,
-        argsUnits: fullParams.argsUnits,
-        returnsNames: fullParams.returnsNames,
-        returnsUnits: fullParams.returnsUnits,
+        argsNames: fullParams.argsNames ? [].concat(fullParams.argsNames).map(el => getURI(el)) : fullParams.argsNames,
+        argsUnits: fullParams.argsUnits ? [].concat(fullParams.argsUnits).map(el => getURI(el)) : fullParams.argsUnits,
+        returnsNames: fullParams.returnsNames ? [].concat(fullParams.returnsNames).map(el => getURI(el)) : fullParams.returnsNames,
+        returnsUnits: fullParams.returnsUnits ? [].concat(fullParams.returnsUnits).map(el => getURI(el)) : fullParams.returnsUnits,
         codeFile: fs.createReadStream(fullParams.codeFile),
       },
       resolveWithFullResponse: true,
@@ -72,8 +73,8 @@ function createRelation(params, host) {
     json: {
       name: params.name,
       desc: params.desc,
-      start: params.start,
-      end: params.end,
+      start: params.start ? getURI(params.start) : params.start,
+      end: params.end ? getURI(params.end) : params.end,
       mathRelation: params.mathRelation,
     },
   });

@@ -4,7 +4,7 @@
   "description": "An easy way to connect with CallByMeaning server.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc mocha"
+    "test": "jest && codecov"
   },
   "repository": {
     "type": "git",
@@ -26,10 +26,12 @@
     "sync-request": "^4.1.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
     "codecov": "^3.0.0",
     "dotenv": "^4.0.0",
-    "mocha": "^4.0.0",
-    "nyc": "^11.4.0"
+    "jest": "^21.2.1"
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
   }
 }

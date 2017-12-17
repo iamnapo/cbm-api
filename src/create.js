@@ -10,7 +10,7 @@ function createNode(params, host) {
     json: {
       name: getURI(params.name),
       desc: params.desc,
-      units: params.units ? [].concat(params.units).map(el => getURI(el)) : params.units,
+      units: [].concat(params.units).map(el => getURI(el)),
     },
   });
   return res.statusCode === 200;
@@ -23,10 +23,10 @@ function createFunction(params, host) {
     json: {
       name: params.name,
       desc: params.desc,
-      argsNames: params.argsNames ? [].concat(params.argsNames).map(el => getURI(el)) : params.argsNames,
-      argsUnits: params.argsUnits ? [].concat(params.argsUnits).map(el => getURI(el)) : params.argsUnits,
-      returnsNames: params.returnsNames ? [].concat(params.returnsNames).map(el => getURI(el)) : params.returnsNames,
-      returnsUnits: params.returnsUnits ? [].concat(params.returnsUnits).map(el => getURI(el)) : params.returnsUnits,
+      argsNames: [].concat(params.argsNames).map(el => getURI(el)),
+      argsUnits: [].concat(params.argsUnits).map(el => getURI(el)),
+      returnsNames: [].concat(params.returnsNames).map(el => getURI(el)),
+      returnsUnits: [].concat(params.returnsUnits).map(el => getURI(el)),
     },
   });
   return res.statusCode === 200;
@@ -45,25 +45,21 @@ async function createAsyncFunction(params, callPath, host) {
     codeFile: '',
   };
   Object.assign(fullParams, params);
-  try {
-    const res = await rp.post({
-      uri: path,
-      formData: {
-        name: fullParams.name,
-        desc: fullParams.desc,
-        argsNames: fullParams.argsNames ? [].concat(fullParams.argsNames).map(el => getURI(el)) : fullParams.argsNames,
-        argsUnits: fullParams.argsUnits ? [].concat(fullParams.argsUnits).map(el => getURI(el)) : fullParams.argsUnits,
-        returnsNames: fullParams.returnsNames ? [].concat(fullParams.returnsNames).map(el => getURI(el)) : fullParams.returnsNames,
-        returnsUnits: fullParams.returnsUnits ? [].concat(fullParams.returnsUnits).map(el => getURI(el)) : fullParams.returnsUnits,
-        codeFile: fs.createReadStream(fullParams.codeFile),
-      },
-      resolveWithFullResponse: true,
-    });
-    request('post', callPath, { json: { command: 'fixit' } });
-    return res.statusCode === 200;
-  } catch (error) {
-    return false;
-  }
+  const res = await rp.post({
+    uri: path,
+    formData: {
+      name: fullParams.name,
+      desc: fullParams.desc,
+      argsNames: [].concat(fullParams.argsNames).map(el => getURI(el)),
+      argsUnits: [].concat(fullParams.argsUnits).map(el => getURI(el)),
+      returnsNames: [].concat(fullParams.returnsNames).map(el => getURI(el)),
+      returnsUnits: [].concat(fullParams.returnsUnits).map(el => getURI(el)),
+      codeFile: fs.createReadStream(fullParams.codeFile),
+    },
+    resolveWithFullResponse: true,
+  });
+  request('post', callPath, { json: { command: 'fixit' } });
+  return res.statusCode === 200;
 }
 
 function createRelation(params, host) {
@@ -73,8 +69,8 @@ function createRelation(params, host) {
     json: {
       name: params.name,
       desc: params.desc,
-      start: params.start ? getURI(params.start) : params.start,
-      end: params.end ? getURI(params.end) : params.end,
+      start: getURI(params.start),
+      end: getURI(params.end),
       mathRelation: params.mathRelation,
     },
   });

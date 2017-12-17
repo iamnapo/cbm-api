@@ -38,20 +38,8 @@ async function lookup(...args) {
             name: response.body.name,
             description: response.body.desc,
             units: response.body.units,
-            asInput: response.body.func_arg.map((obj) => {
-              const temp = {
-                name: obj.name,
-                unit: obj.unitType,
-              };
-              return temp;
-            }),
-            asOutput: response.body.func_res.map((obj) => {
-              const temp = {
-                name: obj.name,
-                unit: obj.unitType,
-              };
-              return temp;
-            }),
+            asInput: response.body.func_arg.map(obj => Object({ name: obj.name, unit: obj.unitType })),
+            asOutput: response.body.func_res.map(obj => Object({ name: obj.name, unit: obj.unitType })),
           };
           break;
         case 'f':
@@ -70,14 +58,7 @@ async function lookup(...args) {
           result = {
             name: response.body.name,
             description: response.body.desc,
-            connections: response.body.connects.map((obj) => {
-              const temp = {
-                start: obj.start.name,
-                end: obj.end.name,
-                mathRelation: obj.mathRelation,
-              };
-              return temp;
-            }),
+            connections: response.body.connects.map(obj => Object({ start: obj.start.name, end: obj.end.name, mathRelation: obj.mathRelation })),
           };
           break;
         default:
@@ -101,20 +82,8 @@ async function lookup(...args) {
       name: response.body.name,
       description: response.body.desc,
       units: response.body.units,
-      asInput: response.body.func_arg.map((obj) => {
-        const temp = {
-          name: obj.name,
-          unit: obj.unitType,
-        };
-        return temp;
-      }),
-      asOutput: response.body.func_res.map((obj) => {
-        const temp = {
-          name: obj.name,
-          unit: obj.unitType,
-        };
-        return temp;
-      }),
+      asInput: response.body.func_arg.map(obj => Object({ name: obj.name, unit: obj.unitType })),
+      asOutput: response.body.func_res.map(obj => Object({ name: obj.name, unit: obj.unitType })),
     };
     return { body: result, statusCode: response.statusCode };
   }
@@ -147,14 +116,7 @@ async function lookup(...args) {
     const result = {
       name: response.body.name,
       description: response.body.desc,
-      connections: response.body.connects.map((obj) => {
-        const temp = {
-          start: obj.start.name,
-          end: obj.end.name,
-          mathRelation: obj.mathRelation,
-        };
-        return temp;
-      }),
+      connections: response.body.connects.map(obj => Object({ start: obj.start.name, end: obj.end.name, mathRelation: obj.mathRelation })),
     };
     return { body: result, statusCode: response.statusCode };
   }

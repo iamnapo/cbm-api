@@ -9,6 +9,7 @@ describe('CallByMeaning', () => {
   afterAll(() => {
     const cbm = new CallByMeaning(HOST);
     const path = cbm.host.concat('/new/fix');
+    request('post', path, { json: { command: 'fixtests' } });
     request('post', path, { json: { command: 'fixit' } });
   });
   describe('Initial config', () => {
@@ -83,7 +84,7 @@ describe('CallByMeaning', () => {
 
     it('looks up a single concept', async () => {
       const cbm = new CallByMeaning(HOST);
-      const response = await cbm.lookup('function', 'c');
+      const response = await cbm.lookup('string', 'c');
       expect(response.statusCode).toEqual(200);
     });
 
@@ -119,8 +120,14 @@ describe('CallByMeaning', () => {
 
     it('returns correctly if it can\'t find the object in the server (with specified type)', async () => {
       const cbm = new CallByMeaning();
-      expect.assertions(2);
-      const response = await cbm.lookup('blabla', 'c');
+      expect.assertions(6);
+      let response = await cbm.lookup('blabla', 'c');
+      expect(response.statusCode).toEqual(418);
+      expect(response.body).toBeInstanceOf(Object);
+      response = await cbm.lookup('blabla', 'f');
+      expect(response.statusCode).toEqual(418);
+      expect(response.body).toBeInstanceOf(Object);
+      response = await cbm.lookup('blabla', 'r');
       expect(response.statusCode).toEqual(418);
       expect(response.body).toBeInstanceOf(Object);
     });
@@ -303,7 +310,7 @@ describe('CallByMeaning', () => {
       expect.assertions(values.length);
 
       for (let i = 0; i < values.length; i += 1) {
-        cbm.lookup('time', values[i]).catch(e => expect(e).toBeDefined());
+        cbm.create('time').catch(e => expect(e).toBeDefined());
       }
     });
 
@@ -323,26 +330,36 @@ describe('CallByMeaning', () => {
       expect.assertions(values.length);
 
       for (let i = 0; i < values.length; i += 1) {
-        cbm.lookup({ name: 'Napo' }, values[i]).catch(e => expect(e).toBeDefined());
+        cbm.create({ name: 'Napo' }, values[i]).catch(e => expect(e).toBeDefined());
       }
     });
 
     it('creates a single Node', async () => {
       const cbm = new CallByMeaning(HOST);
-      const result = await cbm.create({ name: 'Napo' }, 'function');
+      const result = await cbm.create({ name: 'Napo', units: 'cool guy' }, 'node');
       expect(result).toBeTruthy();
     }, TIMEOUT);
 
     it('creates a single Function', async () => {
       const cbm = new CallByMeaning(HOST);
-      const result = await cbm.create({ name: 'testFunc' }, 'function');
+      const result = await cbm.create({
+        name: 'testFunc', argsNames: 'Napo', argsUnits: 'napo', returnsNames: 'nApo', returnsUnits: 'naPo',
+      }, 'function');
       expect(result).toBeTruthy();
     }, TIMEOUT);
 
     it('creates a single async Function with existing file', async () => {
       const cbm = new CallByMeaning(HOST);
-      const result = await cbm.create({ name: 'jsonfn', codeFile: __dirname.concat('/../lib/jsonfn.js') }, 'function');
+      const result = await cbm.create({
+        name: 'jsonfn', argsNames: 'Napo', argsUnits: 'napo', returnsNames: 'nApo', returnsUnits: 'naPo', codeFile: __dirname.concat('/../lib/jsonfn.js'),
+      }, 'function');
       expect(result).toBeTruthy();
+    }, TIMEOUT);
+
+    it('create a single async Function with existing file but not name returns correctly', async () => {
+      const cbm = new CallByMeaning(HOST);
+      const result = await cbm.create({ codeFile: __dirname.concat('/../lib/jsonfn.js') }, 'function');
+      expect(result).toBeFalsy();
     }, TIMEOUT);
 
     it('creates a single Function with non-existing file', async () => {

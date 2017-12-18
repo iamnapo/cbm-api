@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/iamnapo/cbm-api#readme",
   "dependencies": {
+    "dotenv": "^4.0.0",
     "natural": "^0.5.4",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
@@ -27,7 +28,6 @@
   },
   "devDependencies": {
     "codecov": "^3.0.0",
-    "dotenv": "^4.0.0",
     "jest": "^21.2.1"
   },
   "jest": {

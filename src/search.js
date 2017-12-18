@@ -37,8 +37,7 @@ async function search(...args) {
     };
     return temp;
   });
-  response.body = result;
-  return response;
+  return { body: result, statusCode: response.statusCode };
 }
 
 module.exports = search;

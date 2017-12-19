@@ -330,6 +330,12 @@ describe('CallByMeaning', () => {
       expect(result.body[0].description).toEqual('Gets a date and retuns the timestamp of the number of seconds that have elapsed from that date since the Unix epoch (1 January 1970 00:00:00 UTC).');
       expect(result.statusCode).toEqual(200);
     });
+
+    it('returns correctly if function does not exist', async () => {
+      const cbm = new CallByMeaning();
+      const result = await cbm.ask('Give me all functions that');
+      expect(result.statusCode).toEqual(400);
+    });
   });
 
   describe('.create()', () => {
